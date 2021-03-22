@@ -45,17 +45,27 @@ def parseBill(fileName):
 
     return planAmount, finalAmount, entries
 
+def validate(file, billAmount, entires):
+    entriesTotal = 0
+    for entry in entries:
+        print(f"{entry.number} | {entry.amount}| {entry.equipment}| {entry.total}")
+        entriesTotal += entry.amount
+        entriesTotal += entry.equipment
+    
+    if(abs(billAmount - entriesTotal) > 1.0):
+        print('-------------- NO MATCH -----------------')
+        raise ValueError(f"Not matched: {billAmount} with {entriesTotal} in {file}")
+    else:
+        print('-------------- MATCH -----------------')
+        print('________________________________________')
+        print(f'Bill Total: {billAmount}')
+        print(f'Total: from entries:{entriesTotal}')
 
-total, billAmount, entries = parseBill('tmobile\SummaryBillJul2020.pdf')
-entriesTotal = 0
-for entry in entries:
-    print(f"{entry.number} | {entry.amount}| {entry.equipment}| {entry.total}")
-    entriesTotal += entry.amount
-    entriesTotal += entry.equipment
-print('________________________________________')
-print(f'Bill Total: {billAmount}')
-print(f'Total: from entries:{entriesTotal}')
-if(abs(billAmount - entriesTotal) > 1.0):
-    print('-------------- NO MATCH -----------------')
-else:
-    print('-------------- MATCH -----------------')
+
+for file in glob.glob('c:\\sai\\dev\\temp\\pdf\\tmobile\\*.pdf'):
+    print(f' validating : {file}')
+    entries = parseBill(file)
+    total, billAmount, entries = parseBill(file)
+    validate(file, billAmount, entries)
+
+
