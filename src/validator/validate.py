@@ -44,9 +44,9 @@ class EntryParser:
         onetime_charge = 0.0
         if self.equipment > 0:
             equipment = toAmount(dFrame[self.equipment])
-        if self.equipment > 0:
+        if self.services > 0:
             services = toAmount(dFrame[self.services])
-        if self.equipment > 0:
+        if self.onetime_charge > 0:
             onetime_charge = toAmount(dFrame[self.onetime_charge])
         total = self.perLine + equipment + services + onetime_charge
         return Entry(phone, self.perLine, equipment, services, onetime_charge, total)
@@ -107,12 +107,14 @@ def validate(file, billAmount, entires):
 
 
 def save(month, entries):
-    with open(f'{month}.txt', 'w') as writer:
+    file = f'{month}.txt'
+    with open(file, 'w') as writer:
+        writer.write(f"{'Number':^18}|{'Amount':^12}|{'Equipment':^12}|{'Services':^12}|{'One Time':^12}|{'Total':^12}\n")
         for entry in entries:
-            writer.write(f'{entry.number}|{entry.amount}')
+            writer.write(f"{entry.number:^18}|{entry.amount:^12.2f}|{entry.equipment:^12}|{entry.services:^12}|{entry.onetime_charge:^12}|{entry.total:^12.2f}\n")
+    print(f"{file} saved.")
 
-
-for file in glob.glob('c:\\sai\\dev\\temp\\pdf\\tmobile\\SummaryBillDec2019.pdf'):
+for file in glob.glob('c:\\sai\\dev\\temp\\pdf\\tmobile\\*.pdf'):
     print(f' validating : {file}')
     planAmount, billAmount, entries = parseBill(file)
     display(entries)
@@ -121,4 +123,3 @@ for file in glob.glob('c:\\sai\\dev\\temp\\pdf\\tmobile\\SummaryBillDec2019.pdf'
     validate(file, billAmount, entries)
     month = file.lstrip('SummaryBill')
     save(month, entries)
-    break
