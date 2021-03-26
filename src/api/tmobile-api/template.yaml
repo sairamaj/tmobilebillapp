@@ -20,6 +20,7 @@ Resources:
       CodeUri: tmobile/
       Handler: app.lambda_handler
       Runtime: python3.8
+      Timeout: 20
       Events:
         TMobile:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api

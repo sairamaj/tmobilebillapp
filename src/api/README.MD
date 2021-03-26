@@ -105,7 +105,7 @@ By Primary
 |  Users         |  Primay1  |   Users
 |                |  Name1    |   User1,User2,User3
 |                |  Name2    |   User3,User4,User5
-|  NameToPhone   |  Name     |   Phone           
+|  PhoneNames    |  Name     |   Phone           
 |                |  User1    |   503 123 4567
 |                |  User2    |   503 444 1111
 
@@ -114,5 +114,19 @@ Query:
     Users
     NameToPhone
 
+## Dev locally
+* sam build
+* run dynamodb docker
+```cmd
+docker run -p 8000:8000 amazon/dynamodb-local
+```
+* Invoking lambda function
+```cmd
+sam local invoke "TMobileFunction" -e event.json
+```
 
 
+## Resources
+[Dynamo DB Queries](https://www.fernandomc.com/posts/ten-examples-of-getting-data-from-dynamodb-with-python-and-boto3/)
+[Sort Keys](https://aws.amazon.com/blogs/database/using-sort-keys-to-organize-data-in-amazon-dynamodb/#:~:text=Each%20item%20in%20a%20DynamoDB,be%20unique%20across%20the%20table.)
+[Dynamo DB Key Concepts](https://www.dynamodbguide.com/key-concepts/)

@@ -1,1 +1,1 @@
-requests
+boto3==1.13.16
