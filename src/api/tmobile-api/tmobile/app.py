@@ -1,4 +1,5 @@
 import json
+import os
 
 # import requests
 
@@ -13,12 +14,13 @@ def lambda_handler(event, context):
 
     #     raise e
 
+    table_name = os.environ.get('TABLE_NAME', 'Test')
     return {
         "statusCode": 200,
         "body": json.dumps(
             [
                 {
-                    "primary": "contact_1",
+                    "primary": table_name,
                     "users": [
                         {
                             "name": "user1",
