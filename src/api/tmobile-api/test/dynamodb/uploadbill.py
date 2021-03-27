@@ -65,7 +65,6 @@ def parseBill(fileName):
 
     entries = []
     row = 0
-    perLine = 0
     planAmount = 0
     finalAmount = 0
     for val in ds.values:
@@ -85,7 +84,7 @@ def parseBill(fileName):
             entries.append(entryParser.parse(val))
         row = row+1
 
-    return planAmount, finalAmount, entries
+    return entryParser.perLine, planAmount, finalAmount, entries
 
 
 def display(entries):
@@ -160,13 +159,14 @@ def upload(month, finalBill, perline, entries):
 
 for file in glob.glob('c:\\sai\\dev\\temp\\pdf\\tmobile\\*.pdf'):
     print(f' parsing : {file}')
-    planAmount, billAmount, entries = parseBill(file)
+    perLine, planAmount, billAmount, entries = parseBill(file)
     
     # display to view.
     display(entries)
     print(f'final amount:{billAmount:.2f}')
     print(f'plan Amount:{planAmount:.2f}')
-    
+    print(f'perLine:{perLine:.2f}')
+
     # validate the bill for amounts.
     validate(file, billAmount, entries)
     
@@ -177,4 +177,5 @@ for file in glob.glob('c:\\sai\\dev\\temp\\pdf\\tmobile\\*.pdf'):
     save(month, entries)
     
     # upload
-    upload(month, billAmount, planAmount, entries)
+    upload(month, billAmount, perLine, entries)
+    

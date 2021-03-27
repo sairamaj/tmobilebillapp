@@ -14,18 +14,52 @@ Globals:
         TABLE_NAME: TMobile
 
 Resources:
-  TMobileFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  TMobileUsersApiFunction:
+    Type: AWS::Serverless::Function 
     Properties:
       CodeUri: tmobile/
-      Handler: app.lambda_handler
+      Handler: app.lambda_users_handler
       Runtime: python3.8
       Timeout: 90
       Events:
         TMobile:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api 
           Properties:
             Path: /api/phone/users
+            Method: get
+    Policies:
+     - DynamoDBCrudPolicy:
+        TableName: !Ref TMobileTable
+
+  TMobileBillsApiFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: tmobile/
+      Handler: app.lambda_bills_handler
+      Runtime: python3.8
+      Timeout: 90
+      Events:
+        TMobile:
+          Type: Api 
+          Properties:
+            Path: /api/phone/bills
+            Method: get
+    Policies:
+     - DynamoDBCrudPolicy:
+        TableName: !Ref TMobileTable
+
+  TMobileBillDetailsApiFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: tmobile/
+      Handler: app.lambda_bill_details_handler
+      Runtime: python3.8
+      Timeout: 90
+      Events:
+        TMobile:
+          Type: Api 
+          Properties:
+            Path: /api/phone/bills/{yearMonth}
             Method: get
     Policies:
      - DynamoDBCrudPolicy:

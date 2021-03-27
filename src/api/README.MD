@@ -167,3 +167,5 @@ sam local invoke "TMobileFunction" -e event.json
 [Sort Keys](https://aws.amazon.com/blogs/database/using-sort-keys-to-organize-data-in-amazon-dynamodb/#:~:text=Each%20item%20in%20a%20DynamoDB,be%20unique%20across%20the%20table.)
 [Dynamo DB Key Concepts](https://www.dynamodbguide.com/key-concepts/)
 [Lambda to DynamoDB Network Issues](https://stackoverflow.com/questions/48926260/connecting-aws-sam-local-with-dynamodb-in-docker)
+[Not to use Filters](https://www.alexdebrie.com/posts/dynamodb-filter-expressions/)
+[SAM Events](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction)

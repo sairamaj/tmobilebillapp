@@ -20,4 +20,7 @@ users = table.query(
 )
 
 #print(users["Items"])
-print(users["Items"][0]["Value"])
+if len(users["Items"]) > 0:
+    print(users["Items"][0]["Value"])
+else:
+    print('no users found')
