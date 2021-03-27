@@ -1,7 +1,7 @@
 import json
 import os
 import boto3
-# import requests
+from boto3.dynamodb.conditions import Key
 
 
 def lambda_handler(event, context):
@@ -20,30 +20,17 @@ def lambda_handler(event, context):
     user = 'non-local'
     print(f'aws_environment:{aws_environment}')
     if aws_environment:
-        user = 'local'
-        activities_table = boto3.resource(
+        dynamodb = boto3.resource(
             'dynamodb',
-            endpoint_url='http://192.168.99.100:8000'
+            endpoint_url='http://dynamodb-local:8000'
         )
+        table = dynamodb.Table('TMobile')
+
+    response = table.query(
+        KeyConditionExpression=Key('Name').eq('Users')
+    )
 
     return {
         "statusCode": 200,
-        "body": json.dumps(
-            [
-                {
-                    "primary": table_name,
-                    "users": [
-                        {
-                            "name": aws_environment,
-                            "phone": "503 111 1111"
-                        },
-                        {
-                            "name": "user2",
-                            "phone": "503 222 2222"
-                        }
-
-                    ]
-                }
-            ]
-        ),
+        "body":response["Items"][0]["Value"]
     }

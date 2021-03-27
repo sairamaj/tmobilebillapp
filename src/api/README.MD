@@ -102,12 +102,48 @@ By Primary
 |  Bill202102    |  Phone-1  |
 |                |  Phone-2  |
 |                |  Phone-3  |
-|  Users         |  Primay1  |   Users
-|                |  Name1    |   User1,User2,User3
-|                |  Name2    |   User3,User4,User5
-|  PhoneNames    |  Name     |   Phone           
-|                |  User1    |   503 123 4567
-|                |  User2    |   503 444 1111
+|  Users         |  Details  |   
+|                |           | User JSON Data
+
+* User JSON Data
+```json
+[
+  {
+      "primary": "Primary-1",
+      "users": [
+          {
+              "name": "User1",
+              "phone": "503 111 1111"
+          },
+          {
+              "name": "User2",
+              "phone": "503 222 2222"
+          },
+          {
+              "name": "User3",
+              "phone": "503 333 3333"
+          }
+      ]
+  },
+  {
+      "primary": "Primary-2",
+      "users": [
+          {
+              "name": "User4",
+              "phone": "503 444 4444"
+          },
+          {
+              "name": "User5",
+              "phone": "503 555 5555"
+          },
+          {
+              "name": "User6",
+              "phone": "503 666 6666"
+          }
+      ]
+  }
+]
+```
 
 Query:  
     By Month( primary key)
@@ -130,3 +166,4 @@ sam local invoke "TMobileFunction" -e event.json
 [Dynamo DB Queries](https://www.fernandomc.com/posts/ten-examples-of-getting-data-from-dynamodb-with-python-and-boto3/)
 [Sort Keys](https://aws.amazon.com/blogs/database/using-sort-keys-to-organize-data-in-amazon-dynamodb/#:~:text=Each%20item%20in%20a%20DynamoDB,be%20unique%20across%20the%20table.)
 [Dynamo DB Key Concepts](https://www.dynamodbguide.com/key-concepts/)
+[Lambda to DynamoDB Network Issues](https://stackoverflow.com/questions/48926260/connecting-aws-sam-local-with-dynamodb-in-docker)

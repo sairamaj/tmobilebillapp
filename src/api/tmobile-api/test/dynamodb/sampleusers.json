@@ -1,0 +1,36 @@
+[
+    {
+        "primary": "Primary-1",
+        "users": [
+            {
+                "name": "User1",
+                "phone": "503 111 1111"
+            },
+            {
+                "name": "User2",
+                "phone": "503 222 2222"
+            },
+            {
+                "name": "User3",
+                "phone": "503 333 3333"
+            }
+        ]
+    },
+    {
+        "primary": "Primary-2",
+        "users": [
+            {
+                "name": "User4",
+                "phone": "503 444 4444"
+            },
+            {
+                "name": "User5",
+                "phone": "503 555 5555"
+            },
+            {
+                "name": "User6",
+                "phone": "503 666 6666"
+            }
+        ]
+    }
+  ]
