@@ -137,8 +137,8 @@ def upload(month, finalBill, perline, entries):
         Item={
             'Name': 'Bills',
             'Type': f'Summary_{month}',
-            'Total': floatToDecimal(finalBill),
-            "PerLine": floatToDecimal(perline)
+            'Total': "{:.2f}".format(floatToDecimal(finalBill)),
+            "PerLine":  "{:.2f}".format(floatToDecimal(perLine)),
         }
     )
 
@@ -178,4 +178,4 @@ for file in glob.glob('c:\\sai\\dev\\temp\\pdf\\tmobile\\*.pdf'):
     
     # upload
     upload(month, billAmount, perLine, entries)
-    
+        

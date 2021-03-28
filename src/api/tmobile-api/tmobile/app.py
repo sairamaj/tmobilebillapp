@@ -4,27 +4,35 @@ import boto3
 from boto3.dynamodb.conditions import Key
 
 
-def lambda_users_handler(event, context):
+def execute_query(pk, sk=None):
+    table_name = os.environ.get('TABLE_NAME', 'TMobile')
+    aws_environment_local = os.getenv('AWS_SAM_LOCAL')
 
-    table_name = os.environ.get('TABLE_NAME', 'Test')
-    aws_environment = os.getenv('AWS_SAM_LOCAL')
-
-    user = 'non-local'
-    print(f'aws_environment:{aws_environment}')
-    if aws_environment:
+    if aws_environment_local:
         dynamodb = boto3.resource(
             'dynamodb',
             endpoint_url='http://dynamodb-local:8000'
         )
         table = dynamodb.Table('TMobile')
 
-    response = table.query(
-        KeyConditionExpression=Key('Name').eq('Users')
-    )
+    if sk == None:
+        response = table.query(
+            KeyConditionExpression=Key('Name').eq(pk)
+        )
+    else:
+        response = table.query(
+            KeyConditionExpression=Key('Name').eq(
+                pk) & Key('Type').begins_with(sk)
+        )
+
+    return response["Items"]
 
 
-    if len(response["Items"]) > 0:
-        users = response["Items"][0]["Value"]
+def lambda_users_handler(event, context):
+
+    response = execute_query('Users')
+    if len(response) > 0:
+        users = response[0]["Value"]
     else:
         users = []
 
@@ -33,62 +41,38 @@ def lambda_users_handler(event, context):
         "body": users
     }
 
+
 def lambda_bills_handler(event, context):
 
-    table_name = os.environ.get('TABLE_NAME', 'Test')
-    aws_environment = os.getenv('AWS_SAM_LOCAL')
+    response = execute_query('Bills', 'Summary')
 
-    user = 'non-local'
-    print(f'aws_environment:{aws_environment}')
-    if aws_environment:
-        dynamodb = boto3.resource(
-            'dynamodb',
-            endpoint_url='http://dynamodb-local:8000'
-        )
-        table = dynamodb.Table('TMobile')
-
-    response = table.query(
-        KeyConditionExpression=Key('Name').eq('Bills') & Key('Type').begins_with('Summary')
-    )
-
-
-    if len(response["Items"]) > 0:
-        bills = response["Items"]
+    if len(response) > 0:
+        bills = response
     else:
         bills = []
 
     return {
         "statusCode": 200,
-        "body": bills
+        'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,GET'
+        },
+        "body": json.dumps(bills)
     }
+
 
 def lambda_bill_details_handler(event, context):
 
-    table_name = os.environ.get('TABLE_NAME', 'Test')
-    aws_environment = os.getenv('AWS_SAM_LOCAL')
-
     yearMonth = event['pathParameters']['yearMonth']
+    response = execute_query('Bills', f'Details_{yearMonth}')
 
-    user = 'non-local'
-    print(f'aws_environment:{aws_environment}')
-    if aws_environment:
-        dynamodb = boto3.resource(
-            'dynamodb',
-            endpoint_url='http://dynamodb-local:8000'
-        )
-        table = dynamodb.Table('TMobile')
-
-    response = table.query(
-        KeyConditionExpression=Key('Name').eq('Bills') & Key('Type').begins_with(f'Details_{yearMonth}')
-    )
-
-
-    if len(response["Items"]) > 0:
-        bills = response["Items"]
+    if len(response) > 0:
+        bill_details = response
     else:
-        bills = []
+        bill_details = []
 
     return {
         "statusCode": 200,
-        "body": bills
+        "body": bill_details
     }

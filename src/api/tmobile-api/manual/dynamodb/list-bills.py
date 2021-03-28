@@ -19,5 +19,5 @@ bills = table.query(
     KeyConditionExpression=Key('Name').eq('Bills') & Key('Type').begins_with('Summary')
 )
 
-#print(users["Items"])
-print(bills['Items'])
+print(bills["Items"])
+print(json.dumps(bills['Items']))

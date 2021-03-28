@@ -12,6 +12,10 @@ Globals:
     Environment:
       Variables: 
         TABLE_NAME: TMobile
+  Api:
+    Cors:
+      AllowMethods: "'POST, GET, OPTIONS'"
+      AllowOrigin: "'*'"
 
 Resources:
   TMobileUsersApiFunction:

@@ -1,0 +1,25 @@
+﻿@page "/"
+@using web.Shared.Model
+@inject HttpClient Http
+
+@if (bills == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MatTable Items="@bills" class="mat-elevation-z5" ShowPaging="false" PageSize=40>
+        <MatTableRow>
+            <td>@context.Type</td>
+            <td>@context.Total</td>
+            <td>@context.PerLine</td>
+        </MatTableRow>
+    </MatTable>
+}
+@code{
+    private Bill[] bills;
+    protected override async Task OnInitializedAsync()
+    {
+        bills = await Http.GetFromJsonAsync<Bill[]>(UrlConstants.BillsUrl);
+    }
+}
