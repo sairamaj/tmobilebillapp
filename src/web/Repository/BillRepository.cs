@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -22,7 +23,21 @@ namespace web.Repository
 
         public async Task<IEnumerable<BillDetail>> GetBillDetails(string yearMonth)
         {
-            return await this.HttpClient.GetFromJsonAsync<BillDetail[]>(UrlConstants.GetBillDetailsUrl(yearMonth));
+            var users = await this.GetUsers();
+            return (await GetBillDetailsFromApi(yearMonth)).Select(b =>
+            {
+                var foundUser = users.FirstOrDefault(u => u.Phone == b.Number);
+                if (foundUser != null)
+                {
+                    b.Name = foundUser.Name;
+                }
+                else
+                {
+                    b.Name = $"Not Found";
+                }
+
+                return b;
+            });
         }
 
         public async Task<IEnumerable<Bill>> GetBills()
@@ -30,14 +45,26 @@ namespace web.Repository
             return await this.HttpClient.GetFromJsonAsync<Bill[]>(UrlConstants.BillsUrl);
         }
 
+        public async Task<IEnumerable<PrimaryContact>> GetPrimaryContacts()
+        {
+            return await this.HttpClient.GetFromJsonAsync<PrimaryContact[]>(UrlConstants.UsersUrl);
+        }
+
         public async Task<IEnumerable<User>> GetUsers()
         {
-            return await Task.FromResult<IEnumerable<User>>(new List<User>{
-                new User{
-                    Name = "User-1",
-                    PhoneNumber = "(503) 111-1111"
-                }
+            return (await GetPrimaryContacts()).SelectMany(p =>
+            {
+                return p.Users.Select(u =>
+                {
+                    u.Primary = p.Primary;
+                    return u;
+                });
             });
+        }
+
+        private async Task<IEnumerable<BillDetail>> GetBillDetailsFromApi(string yearMonth)
+        {
+            return await this.HttpClient.GetFromJsonAsync<BillDetail[]>(UrlConstants.GetBillDetailsUrl(yearMonth));
         }
     }
 }

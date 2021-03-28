@@ -12,7 +12,7 @@ namespace web.Repository
             var users = await this.GetUsers();
             return (await GetBillDetailsFromApi(yearMonth)).Select(b =>
             {
-                var foundUser = users.FirstOrDefault(u => u.PhoneNumber == b.Number);
+                var foundUser = users.FirstOrDefault(u => u.Phone == b.Number);
                 if (foundUser != null)
                 {
                     b.Name = foundUser.Name;
@@ -42,11 +42,11 @@ namespace web.Repository
             return await Task.FromResult<IEnumerable<User>>(new List<User>{
                 new User{
                     Name = "User 1",
-                    PhoneNumber = "(503) 111-1111"
+                    Phone = "(503) 111-1111"
                 },
                 new User{
                     Name = "User 2",
-                    PhoneNumber = "(503) 222-2222"
+                    Phone = "(503) 222-2222"
                 }
             });
         }
@@ -82,6 +82,11 @@ namespace web.Repository
                     Type = "Summary_(503) 333-3333"
                 }
             });
+        }
+
+        public Task<IEnumerable<PrimaryContact>> GetPrimaryContacts()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

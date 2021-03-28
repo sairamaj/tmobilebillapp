@@ -1,0 +1,33 @@
+﻿@page "/users"
+@using Shared.Model
+@using web.Repository
+@inject IBillRepository Repository
+
+@if (users == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MatTable Items="@users" class="mat-elevation-z5" ShowPaging="false" PageSize=40>
+        <MatTableHeader>
+            <th>Name</th>
+            <th>Number</th>
+            <th>Primary</th>
+        </MatTableHeader>
+        <MatTableRow>
+            <td>@context.Name</td>
+            <td>@context.Phone</td>
+            <td>@context.Primary</td>
+        </MatTableRow>
+    </MatTable>
+}
+@code{
+    private IEnumerable<User> users;
+    protected override async Task OnInitializedAsync()
+    {
+        users = (await this.Repository.GetUsers())
+        .OrderBy(c => c.Primary)
+        .ThenBy(c => c.Name);
+    }
+}

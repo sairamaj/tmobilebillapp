@@ -37,6 +37,6 @@ else
     private IEnumerable<BillDetail> details;
     protected override async Task OnInitializedAsync()
     {
-        details = await this.Repository.GetBillDetails(this.YearMonth);
+        details = (await this.Repository.GetBillDetails(this.YearMonth)).OrderBy(d => d.Name);
     }
 }
