@@ -1,0 +1,1 @@
+del docker\dynamodb\shared-local-instance.db

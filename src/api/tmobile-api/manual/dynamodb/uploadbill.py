@@ -173,9 +173,9 @@ for file in glob.glob('c:\\sai\\dev\\temp\\pdf\\tmobile\\*.pdf'):
     # save for local testing
     head, tail = os.path.split(file)
     month = os.path.splitext(tail)[0]
-    month = month.lstrip('SummaryBill')
+    month = month[len('SummaryBill'):]
     save(month, entries)
-    
+
     # upload
     upload(month, billAmount, perLine, entries)
         

@@ -1,6 +1,8 @@
 ﻿@page "/"
 @using web.Shared.Model
+@using System.Linq
 @inject HttpClient Http
+
 
 @if (bills == null)
 {
@@ -8,18 +10,27 @@
 }
 else
 {
-    <MatTable Items="@bills" class="mat-elevation-z5" ShowPaging="false" PageSize=40>
-        <MatTableRow>
-            <td>@context.Type</td>
-            <td>@context.Total</td>
-            <td>@context.PerLine</td>
-        </MatTableRow>
-    </MatTable>
+    <MatAccordion Multi="true">
+        @foreach (var @bill in @bills)
+        {
+            <MatExpansionPanel LazyRendering=true>
+                <MatExpansionPanelSummary>
+                    <MatExpansionPanelHeader>
+                        @bill.DateAsString
+                    </MatExpansionPanelHeader>
+                </MatExpansionPanelSummary>
+                <MatExpansionPanelDetails>
+                    <DetailComponent yearMonth="@bill.YearMonth" />
+                </MatExpansionPanelDetails>
+            </MatExpansionPanel>
+        }
+    </MatAccordion>
 }
 @code{
     private Bill[] bills;
     protected override async Task OnInitializedAsync()
     {
-        bills = await Http.GetFromJsonAsync<Bill[]>(UrlConstants.BillsUrl);
+        bills = (await Http.GetFromJsonAsync<Bill[]>(UrlConstants.BillsUrl))
+            .OrderByDescending(b => b.Date).ToArray();
     }
 }
