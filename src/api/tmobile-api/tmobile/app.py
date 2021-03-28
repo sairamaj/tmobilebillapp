@@ -84,5 +84,5 @@ def lambda_bill_details_handler(event, context):
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'OPTIONS,GET'
         },
-        "body": bill_details
+        "body": json.dumps(bill_details)
     }

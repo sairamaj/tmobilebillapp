@@ -149,11 +149,11 @@ def upload(month, finalBill, perline, entries):
                 'Name': 'Bills',
                 'Type': f'Details_{month}_{entry.number}',
                 'Number': entry.number,
-                "PlanAmount" : floatToDecimal(entry.amount),
-                "Equipment": floatToDecimal(entry.equipment),
-                "Services": floatToDecimal(entry.services),
-                "OneTimeCharge" : floatToDecimal(entry.onetime_charge),
-                "Total" : floatToDecimal(entry.total)
+                "PlanAmount" : "{:.2f}".format(floatToDecimal(entry.amount)),
+                "Equipment": "{:.2f}".format(floatToDecimal(entry.equipment)),
+                "Services": "{:.2f}".format(floatToDecimal(entry.services)),
+                "OneTimeCharge" : "{:.2f}".format(floatToDecimal(entry.onetime_charge)),
+                "Total" : "{:.2f}".format(floatToDecimal(entry.total))
             }
         )
 
@@ -174,7 +174,7 @@ for file in glob.glob('c:\\sai\\dev\\temp\\pdf\\tmobile\\*.pdf'):
     head, tail = os.path.split(file)
     month = os.path.splitext(tail)[0]
     month = month[len('SummaryBill'):]
-    save(month, entries)
+    #save(month, entries)
 
     # upload
     upload(month, billAmount, perLine, entries)

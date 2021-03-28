@@ -20,4 +20,4 @@ bills = table.query(
 )
 
 #print(users["Items"])
-print(len(bills['Items']))
+print(json.dumps(bills['Items']))

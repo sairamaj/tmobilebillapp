@@ -1,8 +1,8 @@
 ﻿@page "/"
 @using web.Shared.Model
+@using web.Repository
 @using System.Linq
-@inject HttpClient Http
-
+@inject IBillRepository Repository
 
 @if (bills == null)
 {
@@ -16,7 +16,13 @@ else
             <MatExpansionPanel LazyRendering=true>
                 <MatExpansionPanelSummary>
                     <MatExpansionPanelHeader>
-                        @bill.DateAsString
+                        <div class="mat-layout-grid mat-layout-grid-align-left" style="max-width: 800px;">
+                            <div class="mat-layout-grid-inner">
+                                <div class="mat-layout-grid-cell" mat-layout-grid-cell-span-10>@bill.DateAsString</div>
+                                <div class="mat-layout-grid-cell" mat-layout-grid-cell-span-1>@bill.Total</div>
+                                <div class="mat-layout-grid-cell" mat-layout-grid-cell-span-1>@bill.PerLine</div>
+                            </div>
+                        </div>
                     </MatExpansionPanelHeader>
                 </MatExpansionPanelSummary>
                 <MatExpansionPanelDetails>
@@ -30,7 +36,6 @@ else
     private Bill[] bills;
     protected override async Task OnInitializedAsync()
     {
-        bills = (await Http.GetFromJsonAsync<Bill[]>(UrlConstants.BillsUrl))
-            .OrderByDescending(b => b.Date).ToArray();
+        bills = (await Repository.GetBills()).OrderByDescending(b => b.Date).ToArray();
     }
 }
