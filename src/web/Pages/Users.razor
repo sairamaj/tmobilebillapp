@@ -1,8 +1,7 @@
 ﻿@page "/users"
-@using Shared.Model
 @using web.Repository
 @inject IBillRepository Repository
-
+@attribute [Authorize]
 @if (users == null)
 {
     <p><em>Loading...</em></p>

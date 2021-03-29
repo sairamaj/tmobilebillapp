@@ -1,8 +1,7 @@
 @page "/reports"
-@using Shared.Model
 @using web.Repository
 @inject IBillRepository Repository
-
+@attribute [Authorize]
 @if (years == null)
 {
     <p><em>Loading...</em></p>

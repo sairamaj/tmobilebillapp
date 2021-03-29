@@ -1,9 +1,6 @@
 ﻿@page "/"
-@using web.Shared.Model
-@using web.Repository
-@using System.Linq
 @inject IBillRepository Repository
-
+@attribute [Authorize]
 @if (bills == null)
 {
     <p><em>Loading...</em></p>
