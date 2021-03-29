@@ -33,6 +33,16 @@ namespace web.Repository
                     Type = "Summary_Jan2020",
                     Total = 232.00m,
                     PerLine = 19.99m
+                },
+                new Bill{
+                    Type = "Summary_Feb2020",
+                    Total = 232.00m,
+                    PerLine = 19.99m
+                },
+                new Bill{
+                    Type = "Summary_Jan2021",
+                    Total = 232.00m,
+                    PerLine = 19.99m
                 }
             });
         }
@@ -86,7 +96,35 @@ namespace web.Repository
 
         public Task<IEnumerable<PrimaryContact>> GetPrimaryContacts()
         {
-            throw new System.NotImplementedException();
+            return Task.FromResult<IEnumerable<PrimaryContact>>(
+                new List<PrimaryContact>(){
+                    new PrimaryContact{
+                        Primary = "primary1",
+                        Users = new List<User>{
+                            new User{
+                                Name = "User1",
+                                Phone = "(503) 111-1111"
+                            },
+                            new User{
+                                Name = "User2",
+                                Phone = "(503) 222-2222"
+                            }
+                        }
+                    },
+                    new PrimaryContact{
+                        Primary = "primary2",
+                        Users = new List<User>{
+                            new User{
+                                Name = "User3",
+                                Phone = "(503) 333-3333"
+                            },
+                            new User{
+                                Name = "User4",
+                                Phone = "(503) 444-4444"
+                            }
+                        }
+                    }
+                });
         }
     }
 }

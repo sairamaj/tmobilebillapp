@@ -9,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MatBlazor;
 using web.Repository;
+using Microsoft.Extensions.Caching.Memory;
+using web.Shared;
+using Blazored.LocalStorage;
 
 namespace web
 {
@@ -20,10 +23,13 @@ namespace web
             builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddSingleton<IMemoryCache, MemoryCache>();
+            builder.Services.AddScoped<ICacheManager, CacheManager>();
             builder.Services.AddScoped<IBillRepository, BillRepository>();
-            // builder.Services.AddScoped<IBillRepository, FakeBillRepository>();
+            //  builder.Services.AddScoped<IBillRepository, FakeBillRepository>();
             builder.Services.AddMatBlazor();
-
+            builder.Services.AddBlazoredLocalStorage(config =>
+                    config.JsonSerializerOptions.WriteIndented = true);
             await builder.Build().RunAsync();
         }
     }

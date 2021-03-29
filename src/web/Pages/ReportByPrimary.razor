@@ -1,0 +1,55 @@
+@page "/reportbyprimaryuser/{year}/{primary}"
+@using Shared.Model
+@using web.Repository
+@inject IBillRepository Repository
+
+@if (userBillDetailsByYearMonth == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MatTable Items="@userBillDetailsByYearMonth" class="mat-elevation-z5" ShowPaging="false" PageSize=40>
+        <MatTableHeader>
+            <th>Month</th>
+            <th>Total</th>
+        </MatTableHeader>
+        <MatTableRow>
+            <td>@context.Key</td>
+            <td>@context.Value</td>
+        </MatTableRow>
+    </MatTable>
+    
+    <p>Year Total:</p><p>@yearTotal</p>
+}
+
+@code{
+    [Parameter]
+    public string Year { get; set; }
+
+    [Parameter]
+    public string Primary { get; set; }
+
+    private decimal yearTotal;
+
+    private IDictionary<string,decimal> userBillDetailsByYearMonth;
+    protected override async Task OnInitializedAsync()
+    {
+        var users = await Repository.GetPrimaryContacts();
+        // todo
+        // create api for the year also
+        var byMonth = new Dictionary<string,decimal>();
+        yearTotal = 0.0m;
+        foreach (var month in new string[]
+            { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            })
+        {
+            byMonth[month] = (await Repository.GetBillDetails($"{month}{Year}"))
+                .Where( b => b.Primary == this.Primary)
+                .Sum(b => b.Total);
+            yearTotal += byMonth[month];
+        }
+
+        userBillDetailsByYearMonth = byMonth;
+    }
+}
