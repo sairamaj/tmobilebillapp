@@ -9,6 +9,7 @@
 }
 else
 {
+    <p>Year Total:<b>&nbsp;@yearTotal</b></p>
     <MatTable Items="@userBillDetailsByYearMonth" class="mat-elevation-z5" ShowPaging="false" PageSize=40>
         <MatTableHeader>
             <th>Month</th>
@@ -19,8 +20,6 @@ else
             <td>@context.Value</td>
         </MatTableRow>
     </MatTable>
-    
-    <p>Year Total:</p><p>@yearTotal</p>
 }
 
 @code{
@@ -44,10 +43,20 @@ else
             { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
             })
         {
-            byMonth[month] = (await Repository.GetBillDetails($"{month}{Year}"))
+            var billDetails = await Repository.GetBillDetails($"{month}{Year}");
+            if(billDetails.Any())
+            {
+                byMonth[month] = (await Repository.GetBillDetails($"{month}{Year}"))
                 .Where( b => b.Primary == this.Primary)
                 .Sum(b => b.Total);
-            yearTotal += byMonth[month];
+                
+                yearTotal += byMonth[month];
+            }
+            
+            if(this.Year ==  System.DateTime.Now.Year.ToString() && System.DateTime.Now.ToString("MMM") == month){
+                break;  // stop after current month in this year.
+            }
+
         }
 
         userBillDetailsByYearMonth = byMonth;
