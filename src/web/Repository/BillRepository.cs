@@ -59,17 +59,23 @@ namespace web.Repository
 
         public async Task<IEnumerable<Bill>> GetBills()
         {
-            return await this.cacheManager.GetWithSet<IEnumerable<Bill>>("bills", async () =>
+            return await this.cacheManager.GetWithSet<IEnumerable<Bill>>(
+                "bills",
+                Constants.BillCacheExpiry,
+                async () =>
             {
-                return await this.HttpClient.GetFromJsonAsync<IEnumerable<Bill>>(UrlConstants.BillsUrl);
+                return await this.HttpClient.GetFromJsonAsync<IEnumerable<Bill>>(Constants.BillsUrl);
             });
         }
 
         public async Task<IEnumerable<PrimaryContact>> GetPrimaryContacts()
         {
-            return await this.cacheManager.GetWithSet<IEnumerable<PrimaryContact>>("primary-contacts", async () =>
+            return await this.cacheManager.GetWithSet<IEnumerable<PrimaryContact>>(
+                "primary-contacts", 
+                Constants.UsersCacheExpiry,
+                async () =>
             {
-                return await this.HttpClient.GetFromJsonAsync<IEnumerable<PrimaryContact>>(UrlConstants.UsersUrl);
+                return await this.HttpClient.GetFromJsonAsync<IEnumerable<PrimaryContact>>(Constants.UsersUrl);
             });
         }
 
@@ -87,17 +93,25 @@ namespace web.Repository
 
         public async Task<string> GetDownloadLink(string yearMonth)
         {
-            return await this.cacheManager.GetWithSet<string>($"bill-download-link-{yearMonth}", async () =>
+            var linkDetails = await this.cacheManager.GetWithSet<Link>(
+                $"bill-download-link-{yearMonth}", 
+                Constants.DownloadUrlCacheExpiry,
+                async () =>
             {
-                return (await this.HttpClient.GetFromJsonAsync<Link>(UrlConstants.GetDownloadGenerateLinkUrl(yearMonth))).Url;
+                return await this.HttpClient.GetFromJsonAsync<Link>(Constants.GetDownloadGenerateLinkUrl(yearMonth));
             });
+
+            return linkDetails.Url;
         }
 
         private async Task<IEnumerable<BillDetail>> GetBillDetailsFromApi(string yearMonth)
         {
-            return await this.cacheManager.GetWithSet<IEnumerable<BillDetail>>($"bill-details-{yearMonth}", async () =>
+            return await this.cacheManager.GetWithSet<IEnumerable<BillDetail>>(
+                $"bill-details-{yearMonth}", 
+                Constants.BillDetailsCacheExpiry,
+                async () =>
            {
-               return await this.HttpClient.GetFromJsonAsync<IEnumerable<BillDetail>>(UrlConstants.GetBillDetailsUrl(yearMonth));
+               return await this.HttpClient.GetFromJsonAsync<IEnumerable<BillDetail>>(Constants.GetBillDetailsUrl(yearMonth));
            });
         }
     }
