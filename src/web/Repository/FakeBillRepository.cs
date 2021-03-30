@@ -32,17 +32,20 @@ namespace web.Repository
                 new Bill{
                     Type = "Summary_Jan2020",
                     Total = 232.00m,
-                    PerLine = 19.99m
+                    PerLine = 19.99m,
+                    PdfDownloadLink = "https://sairama-t-mobile.s3.amazonaws.com/SummaryBillApr2020.pdf?AWSAccessKeyId=AKIAQP3KYNNGGRKOHZPO&Signature=J5Tt4QdTwQHm07rEjRfidP6RYoo%3D&Expires=1617076214",
                 },
                 new Bill{
                     Type = "Summary_Feb2020",
                     Total = 232.00m,
-                    PerLine = 19.99m
+                    PerLine = 19.99m,
+PdfDownloadLink = "https://sairama-t-mobile.s3.amazonaws.com/SummaryBillApr2020.pdf?AWSAccessKeyId=AKIAQP3KYNNGGRKOHZPO&Signature=J5Tt4QdTwQHm07rEjRfidP6RYoo%3D&Expires=1617076214",                    
                 },
                 new Bill{
                     Type = "Summary_Jan2021",
                     Total = 232.00m,
-                    PerLine = 19.99m
+                    PerLine = 19.99m,
+PdfDownloadLink = "https://sairama-t-mobile.s3.amazonaws.com/SummaryBillApr2020.pdf?AWSAccessKeyId=AKIAQP3KYNNGGRKOHZPO&Signature=J5Tt4QdTwQHm07rEjRfidP6RYoo%3D&Expires=1617076214",                    
                 }
             });
         }
@@ -125,6 +128,11 @@ namespace web.Repository
                         }
                     }
                 });
+        }
+
+        public Task<string> GetDownloadLink(string yearMonth)
+        {
+            return Task.FromResult("http://dummy");
         }
     }
 }

@@ -41,8 +41,8 @@ namespace web.Repository
                 {
                     // Fill user name and primary user for this bill detail.
                     b.Name = foundUser.Name;
-                    var foundPrimaryUser = primaryUsers.FirstOrDefault(p=> p.Users.Any(u=> u.Name == b.Name));
-                    if(foundPrimaryUser != null)
+                    var foundPrimaryUser = primaryUsers.FirstOrDefault(p => p.Users.Any(u => u.Name == b.Name));
+                    if (foundPrimaryUser != null)
                     {
                         b.Primary = foundPrimaryUser.Primary;
                     }
@@ -82,6 +82,14 @@ namespace web.Repository
                     u.Primary = p.Primary;
                     return u;
                 });
+            });
+        }
+
+        public async Task<string> GetDownloadLink(string yearMonth)
+        {
+            return await this.cacheManager.GetWithSet<string>($"bill-download-link-{yearMonth}", async () =>
+            {
+                return (await this.HttpClient.GetFromJsonAsync<Link>(UrlConstants.GetDownloadGenerateLinkUrl(yearMonth))).Url;
             });
         }
 

@@ -6,6 +6,6 @@ codeuri = "C:\\sai\\dev\\tmobilebillapp\\src\\api\\tmobile-api\\tmobile"
 runtime = "python3.8"
 source_md5 = ""
 packagetype = "Zip"
-functions = ["TMobileUsersApiFunction", "TMobileBillsApiFunction", "TMobileBillDetailsApiFunction"]
+functions = ["TMobileBillDownloadUrlApiFunction", "TMobileUsersApiFunction", "TMobileBillsApiFunction", "TMobileBillDetailsApiFunction"]
 
 [layer_build_definitions]

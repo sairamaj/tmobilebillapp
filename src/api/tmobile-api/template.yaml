@@ -5,7 +5,6 @@ Description: >
 
   Sample SAM Template for tmobile-api
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 3
@@ -18,6 +17,23 @@ Globals:
       AllowOrigin: "'*'"
 
 Resources:
+  TMobileBillDownloadUrlApiFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: tmobile/
+      Handler: app.lambda_bill_get_download_url
+      Runtime: python3.8
+      Timeout: 90
+      Events:
+        TMobile:
+          Type: Api 
+          Properties:
+            Path: /api/phone/links/bills/{yearMonth}
+            Method: get
+    Policies:
+     - DynamoDBCrudPolicy:
+        TableName: !Ref TMobileTable
+
   TMobileUsersApiFunction:
     Type: AWS::Serverless::Function 
     Properties:
@@ -68,6 +84,7 @@ Resources:
     Policies:
      - DynamoDBCrudPolicy:
         TableName: !Ref TMobileTable
+
 
 TMobileTable:
   Type: AWS::Serverless::SimpleTable

@@ -86,3 +86,28 @@ def lambda_bill_details_handler(event, context):
         },
         "body": json.dumps(bill_details)
     }
+
+
+def lambda_bill_get_download_url(event, context):
+
+    yearMonth = event['pathParameters']['yearMonth']
+
+    s3_client = boto3.client('s3')
+
+    BUCKET = 'sairama-t-mobile'
+    OBJECT = f'SummaryBill{yearMonth}.pdf'
+
+    url = s3_client.generate_presigned_url(
+        'get_object',
+        Params={'Bucket': BUCKET, 'Key': OBJECT},
+        ExpiresIn=3600)
+
+    return {
+        "statusCode": 200,
+        'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,GET'
+        },
+        "body": json.dumps({"url": url})
+    }

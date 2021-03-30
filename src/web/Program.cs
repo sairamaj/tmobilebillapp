@@ -30,7 +30,7 @@ namespace web
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddScoped<ICacheManager, CacheManager>();
             builder.Services.AddScoped<IBillRepository, BillRepository>();
-            //  builder.Services.AddScoped<IBillRepository, FakeBillRepository>();
+            // builder.Services.AddScoped<IBillRepository, FakeBillRepository>();
             builder.Services.AddMatBlazor();
             builder.Services.AddBlazoredLocalStorage(config =>
                     config.JsonSerializerOptions.WriteIndented = true);

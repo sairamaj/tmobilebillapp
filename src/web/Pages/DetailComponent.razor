@@ -8,6 +8,7 @@
 }
 else
 {
+    <MatButtonLink Href="@pdfDownloadLink" Target="_blank">Download</MatButtonLink>
     <MatTable Items="@details" class="mat-elevation-z5" ShowPaging="false" PageSize=40>
         <MatTableHeader>
             <th>Name</th>
@@ -32,10 +33,20 @@ else
 @code{
     [Parameter]
     public string YearMonth { get; set; }
+    public string pdfDownloadLink { get; set; }
 
     private IEnumerable<BillDetail> details;
     protected override async Task OnInitializedAsync()
     {
+        try
+        {
+            pdfDownloadLink = await this.Repository.GetDownloadLink(this.YearMonth);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error generating the link:{this.YearMonth} {e}");
+        }
+
         details = (await this.Repository.GetBillDetails(this.YearMonth)).OrderBy(d => d.Name);
     }
 }

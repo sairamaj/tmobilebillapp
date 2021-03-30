@@ -10,5 +10,6 @@ namespace web.Repository
        Task<IEnumerable<Bill>> GetBills();
        Task<IEnumerable<BillDetail>> GetBillDetails(string yearMonth);
        Task<IEnumerable<PrimaryContact>> GetPrimaryContacts();
+       Task<string> GetDownloadLink(string yearMonth);
     }
 }

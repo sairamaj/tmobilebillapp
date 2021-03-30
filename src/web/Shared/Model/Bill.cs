@@ -24,5 +24,6 @@ namespace web.Shared.Model
         }
 
         public string DateAsString => this.Date.ToString("MMMM yyyy");
+        public string PdfDownloadLink {get; set;}
     }
 }
