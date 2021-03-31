@@ -14,6 +14,11 @@ def execute_query(pk, sk=None):
             endpoint_url='http://dynamodb-local:8000'
         )
         table = dynamodb.Table('TMobile')
+    else:
+        dynamodb = boto3.resource(
+            'dynamodb'
+        )
+        table = dynamodb.Table('TMobile')
 
     if sk == None:
         response = table.query(

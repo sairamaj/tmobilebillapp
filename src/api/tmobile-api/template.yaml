@@ -31,8 +31,8 @@ Resources:
             Path: /api/phone/links/bills/{yearMonth}
             Method: get
     Policies:
-     - DynamoDBCrudPolicy:
-        TableName: !Ref TMobileTable
+      - DynamoDBCrudPolicy:
+          TableName: !Ref TMobileTable
 
   TMobileUsersApiFunction:
     Type: AWS::Serverless::Function 
@@ -48,8 +48,8 @@ Resources:
             Path: /api/phone/users
             Method: get
     Policies:
-     - DynamoDBCrudPolicy:
-        TableName: !Ref TMobileTable
+      - DynamoDBCrudPolicy:
+          TableName: !Ref TMobileTable
 
   TMobileBillsApiFunction:
     Type: AWS::Serverless::Function 
@@ -65,8 +65,8 @@ Resources:
             Path: /api/phone/bills
             Method: get
     Policies:
-     - DynamoDBCrudPolicy:
-        TableName: !Ref TMobileTable
+       - DynamoDBCrudPolicy:
+           TableName: !Ref TMobileTable
 
   TMobileBillDetailsApiFunction:
     Type: AWS::Serverless::Function 
@@ -82,44 +82,22 @@ Resources:
             Path: /api/phone/bills/{yearMonth}
             Method: get
     Policies:
-     - DynamoDBCrudPolicy:
-        TableName: !Ref TMobileTable
-
-
-TMobileTable:
-  Type: AWS::Serverless::SimpleTable
-  Properties:
-    PrimaryKey: Name
-    TableName: TMobile
-    AttributeDefinitions: 
-        - 
-          AttributeName: "Name"
-          AttributeType: "S"
-        - 
-          AttributeName: "Type"
-          AttributeType: "S"
-    KeySchema: 
-        - 
-          AttributeName: "Name"
-          KeyType: "HASH"
-        - 
-          AttributeName: "Type"
-          KeyType: "RANGE"
-
-    ProvisionedThroughput: 
-        ReadCapacityUnits: "2"
-        WriteCapacityUnits: "2"
-
-Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  TMobileApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/api/phone/users"
-  TMobileFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt TMobileFunction.Arn
-  TMobileFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt TMobileFunctionRole.Arn
+      - DynamoDBCrudPolicy:
+          TableName: !Ref TMobileTable
+  TMobileTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: TMobile
+      AttributeDefinitions: 
+        - AttributeName: Name
+          AttributeType: S
+        - AttributeName: Type
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: Name
+          KeyType: HASH
+        - AttributeName: Type
+          KeyType: RANGE
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2

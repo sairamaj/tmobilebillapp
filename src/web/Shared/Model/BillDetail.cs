@@ -11,5 +11,6 @@ namespace web.Shared.Model
         public decimal Services {get; set;}
         public decimal OneTimeCharge {get; set;}
         public decimal Total {get; set;}
+        public bool IsAbovePlan => (this.Total - this.PlanAmount) > 5.0m;
     }
 }
