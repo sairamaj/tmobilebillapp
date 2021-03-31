@@ -124,9 +124,12 @@ def save(month, entries):
 
 def upload(month, finalBill, perline, entries):
 
+    # dynamodb = boto3.resource(
+    #     'dynamodb',
+    #     endpoint_url='http://localhost:8000'
+    # )
     dynamodb = boto3.resource(
-        'dynamodb',
-        endpoint_url='http://localhost:8000'
+        'dynamodb'
     )
 
     table = dynamodb.Table('TMobile')

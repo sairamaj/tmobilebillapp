@@ -39,7 +39,7 @@ def lambda_users_handler(event, context):
     if len(response) > 0:
         users = response[0]["Value"]
     else:
-        users = []
+        users = '[]'
 
     return {
         "statusCode": 200,
@@ -59,7 +59,7 @@ def lambda_bills_handler(event, context):
     if len(response) > 0:
         bills = response
     else:
-        bills = []
+        bills = '[]'
 
     return {
         "statusCode": 200,
