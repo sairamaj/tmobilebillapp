@@ -1,0 +1,40 @@
+@page "/"
+@using SelfService.Shared
+@inject HttpClient Http
+@attribute [Microsoft.AspNetCore.Authorization.Authorize()]
+
+@if (bills == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MatAccordion Multi="true">
+        @foreach (var @bill in @bills)
+        {
+            <MatExpansionPanel LazyRendering=true>
+                <MatExpansionPanelSummary>
+                    <MatExpansionPanelHeader>
+                        <div class="mat-layout-grid mat-layout-grid-align-left" style="max-width: 800px;">
+                            <div class="mat-layout-grid-inner">
+                                <div class="mat-layout-grid-cell" mat-layout-grid-cell-span-4>@bill.DateAsString</div>
+                                <div class="mat-layout-grid-cell" mat-layout-grid-cell-span-2>@bill.Total</div>
+                                <div class="mat-layout-grid-cell" mat-layout-grid-cell-span-2>@bill.PerLine</div>
+                            </div>
+                        </div>
+                    </MatExpansionPanelHeader>
+                </MatExpansionPanelSummary>
+                <MatExpansionPanelDetails>
+                </MatExpansionPanelDetails>
+            </MatExpansionPanel>
+        }
+    </MatAccordion>
+}
+@code{
+    private IEnumerable<Bill> bills;
+    protected override async Task OnInitializedAsync()
+    {
+        bills = (await Http.GetFromJsonAsync<IEnumerable<Bill>>("api/bills"))
+            .OrderByDescending(b => b.Date).ToArray();
+    }
+}

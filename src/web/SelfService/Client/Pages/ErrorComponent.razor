@@ -1,0 +1,7 @@
+@if(@Error != null){
+    <p style="color:red"><span><em>@Error</em></span></p>
+}
+@code {
+    [Parameter]
+    public string Error {get; set;}
+}
