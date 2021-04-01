@@ -169,3 +169,4 @@ sam local invoke "TMobileFunction" -e event.json
 [Lambda to DynamoDB Network Issues](https://stackoverflow.com/questions/48926260/connecting-aws-sam-local-with-dynamodb-in-docker)
 [Not to use Filters](https://www.alexdebrie.com/posts/dynamodb-filter-expressions/)
 [SAM Events](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction)
+[ADB2C Integration with Functions](https://stackoverflow.com/questions/64866476/how-to-secure-an-azure-function-accessed-by-a-blazor-wasm-app-with-azure-ad-b2c)

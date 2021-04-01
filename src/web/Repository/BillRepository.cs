@@ -11,8 +11,12 @@ namespace web.Repository
     internal class BillRepository : IBillRepository
     {
         private readonly ICacheManager cacheManager;
+        private readonly ISettingsProvider settingsProvider;
 
-        public BillRepository(HttpClient httpClient, ICacheManager cacheManager)
+        public BillRepository(
+            HttpClient httpClient,
+            ICacheManager cacheManager,
+            ISettingsProvider settingsProvider)
         {
             if (httpClient is null)
             {
@@ -26,6 +30,7 @@ namespace web.Repository
 
             this.HttpClient = httpClient;
             this.cacheManager = cacheManager;
+            this.settingsProvider = settingsProvider ?? throw new System.ArgumentNullException(nameof(settingsProvider));
         }
 
         public HttpClient HttpClient { get; }
@@ -64,18 +69,18 @@ namespace web.Repository
                 Constants.BillCacheExpiry,
                 async () =>
             {
-                return await this.HttpClient.GetFromJsonAsync<IEnumerable<Bill>>(Constants.BillsUrl);
+                return await this.HttpClient.GetFromJsonAsync<IEnumerable<Bill>>(this.settingsProvider.GetBillsUrl());
             });
         }
 
         public async Task<IEnumerable<PrimaryContact>> GetPrimaryContacts()
         {
             return await this.cacheManager.GetWithSet<IEnumerable<PrimaryContact>>(
-                "primary-contacts", 
+                "primary-contacts",
                 Constants.UsersCacheExpiry,
                 async () =>
             {
-                return await this.HttpClient.GetFromJsonAsync<IEnumerable<PrimaryContact>>(Constants.UsersUrl);
+                return await this.HttpClient.GetFromJsonAsync<IEnumerable<PrimaryContact>>(this.settingsProvider.GetUserUrl());
             });
         }
 
@@ -94,11 +99,11 @@ namespace web.Repository
         public async Task<string> GetDownloadLink(string yearMonth)
         {
             var linkDetails = await this.cacheManager.GetWithSet<Link>(
-                $"bill-download-link-{yearMonth}", 
+                $"bill-download-link-{yearMonth}",
                 Constants.DownloadUrlCacheExpiry,
                 async () =>
             {
-                return await this.HttpClient.GetFromJsonAsync<Link>(Constants.GetDownloadGenerateLinkUrl(yearMonth));
+                return await this.HttpClient.GetFromJsonAsync<Link>(this.settingsProvider.GetDownloadUrl(yearMonth));
             });
 
             return linkDetails.Url;
@@ -107,11 +112,11 @@ namespace web.Repository
         private async Task<IEnumerable<BillDetail>> GetBillDetailsFromApi(string yearMonth)
         {
             return await this.cacheManager.GetWithSet<IEnumerable<BillDetail>>(
-                $"bill-details-{yearMonth}", 
+                $"bill-details-{yearMonth}",
                 Constants.BillDetailsCacheExpiry,
                 async () =>
            {
-               return await this.HttpClient.GetFromJsonAsync<IEnumerable<BillDetail>>(Constants.GetBillDetailsUrl(yearMonth));
+               return await this.HttpClient.GetFromJsonAsync<IEnumerable<BillDetail>>(this.settingsProvider.GetBillDetailsUrl(yearMonth));
            });
         }
     }
