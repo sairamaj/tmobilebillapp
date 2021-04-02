@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using SelfService.Server.Middleware;
 using SelfService.Server.Model;
 using SelfService.Server.Repository;
@@ -27,11 +28,17 @@ namespace SelfService.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IBillsRepository, BillsRepository>();
-            services.AddScoped<HttpClient, HttpClient>();
+            // services.AddScoped<HttpClient, HttpClient>();
+            services.AddHttpClient("t-mobile-api", c =>
+            {
+                var apiOptions = services.BuildServiceProvider().GetService<IOptions<ApiOptions>>().Value;
+                c.BaseAddress = new System.Uri(apiOptions.BaseUrl);
+                c.DefaultRequestHeaders.Add("x-api-key", apiOptions.ApiKey);
+            });
             services.AddScoped<ICacheManager, CacheManager>();
             services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
                 .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
-            services.Configure<ApiUrl>(op => { Configuration.Bind("ApiUrls", op); });
+            services.Configure<ApiOptions>(op => { Configuration.Bind("ApiSettings", op); });
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddOptions();

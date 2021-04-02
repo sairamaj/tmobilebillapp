@@ -13,26 +13,13 @@ namespace SelfService.Server.Repository
 {
     internal class BillsRepository : IBillsRepository
     {
-        private readonly HttpClient http;
+        private readonly IHttpClientFactory clientFactory;
         private readonly ICacheManager cacheManager;
-        ApiUrl _apiUrl;
         public BillsRepository(
-            IOptions<ApiUrl> apiUrlOptions,
-            HttpClient http,
+            IHttpClientFactory clientFactory,
             ICacheManager cacheManager)
         {
-            if (apiUrlOptions is null)
-            {
-                throw new System.ArgumentNullException(nameof(apiUrlOptions));
-            }
-
-            if (apiUrlOptions.Value is null)
-            {
-                throw new System.ArgumentNullException("apiUrls");
-            }
-
-            this._apiUrl = apiUrlOptions.Value;
-            this.http = http ?? throw new ArgumentNullException(nameof(http));
+            this.clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
             this.cacheManager = cacheManager ?? throw new ArgumentNullException(nameof(cacheManager));
         }
 
@@ -91,6 +78,12 @@ namespace SelfService.Server.Repository
                        });
         }
 
+        private HttpClient Client {
+            get{
+                return this.clientFactory.CreateClient("t-mobile-api");
+            }
+        }
+
         private async Task<IEnumerable<BillDetail>> GetBillDetailsInternal(string yearMonth)
         {
             var users = await this.GetUsers();
@@ -121,8 +114,13 @@ namespace SelfService.Server.Repository
         {
             // GetFromJsonAsync fron Json extension cannot convert string to decimals.
             // Going back to Newtonsoft.Json Api.
-            System.Console.WriteLine($"--- GetBillsFrom-Api:" + this._apiUrl.BillsUrl);
-            var response = await this.http.GetAsync(this._apiUrl.BillsUrl);
+            System.Console.WriteLine($"--- GetBillsFrom-Api:");
+            foreach(var h in this.Client.DefaultRequestHeaders){
+                System.Console.WriteLine("-----------------------");
+                System.Console.WriteLine($"{h.Key}:{h.Value.First()}");
+                System.Console.WriteLine("-----------------------");
+            }
+            var response = await this.Client.GetAsync("bills");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<IEnumerable<Bill>>(await response.Content.ReadAsStringAsync());
         }
@@ -130,22 +128,22 @@ namespace SelfService.Server.Repository
 
         private async Task<IEnumerable<BillDetail>> GetBillDetailsFromApi(string yearMonth)
         {
-            System.Console.WriteLine($"--- GetBillDetailsFrom-Api:" + string.Format(this._apiUrl.DetailsUrl, yearMonth));
-            var response = await this.http.GetAsync(string.Format(this._apiUrl.DetailsUrl, yearMonth));
+            System.Console.WriteLine($"--- GetBillDetailsFrom-Api:" + yearMonth);
+            var response = await this.Client.GetAsync($"bills/{yearMonth}");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<IEnumerable<BillDetail>>(await response.Content.ReadAsStringAsync());
         }
 
         private async Task<IEnumerable<PrimaryContact>> GetPrimaryContactsFromApi()
         {
-            System.Console.WriteLine($"--- GetPrimaryContactsFrom-Api:" + this._apiUrl.Users);
-            return await this.http.GetFromJsonAsync<IEnumerable<PrimaryContact>>(this._apiUrl.Users);
+            System.Console.WriteLine($"--- GetPrimaryContactsFrom-Api:" );
+            return await this.Client.GetFromJsonAsync<IEnumerable<PrimaryContact>>("users");
         }
 
         private async Task<Link> GetDownloadUrlFromApi(string yearMonth)
         {
-            System.Console.WriteLine($"--- DownloadLink-Api:" + string.Format(this._apiUrl.GetDownloadUrl, yearMonth));
-            return await this.http.GetFromJsonAsync<Link>(string.Format(this._apiUrl.GetDownloadUrl, yearMonth));
+            System.Console.WriteLine($"--- DownloadLink-Api:" + yearMonth);
+            return await this.Client.GetFromJsonAsync<Link>($"links/bills/{yearMonth}");
         }
     }
 }

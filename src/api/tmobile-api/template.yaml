@@ -30,6 +30,8 @@ Resources:
           Properties:
             Path: /api/phone/links/bills/{yearMonth}
             Method: get
+            Auth:
+              ApiKeyRequired: true
     Policies:
       - DynamoDBCrudPolicy:
           TableName: !Ref TMobileTable
@@ -47,6 +49,8 @@ Resources:
           Properties:
             Path: /api/phone/users
             Method: get
+            Auth:
+              ApiKeyRequired: true
     Policies:
       - DynamoDBCrudPolicy:
           TableName: !Ref TMobileTable
@@ -64,6 +68,8 @@ Resources:
           Properties:
             Path: /api/phone/bills
             Method: get
+            Auth:
+              ApiKeyRequired: true
     Policies:
        - DynamoDBCrudPolicy:
            TableName: !Ref TMobileTable
@@ -81,6 +87,8 @@ Resources:
           Properties:
             Path: /api/phone/bills/{yearMonth}
             Method: get
+            Auth:
+              ApiKeyRequired: true
     Policies:
       - DynamoDBCrudPolicy:
           TableName: !Ref TMobileTable
