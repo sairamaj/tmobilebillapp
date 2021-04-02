@@ -1,0 +1,56 @@
+trigger:
+  - master
+
+pool:
+  vmImage: "VS2017-Win2016"
+
+variables:
+  BuildConfiguration: 'Release'
+  AzureSubscriptionEndpoint: 'visual-studio-enterprise'
+  WebAppName: sairama-tmobile
+  EnvironmentName: sairama-tmobile
+
+stages:
+- stage: 'build'
+  displayName: 'build'
+  jobs:
+    - job: 
+      displayName: 'build'
+      pool:
+        vmImage: 'vs2017-win2016'
+      steps:
+      - task: DotNetCoreCLI@2
+        displayName: 'build'
+        inputs:
+          command: publish
+          projects: src\web\SelfService\Server\SelfService.Server.csproj
+          arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+          zipAfterPublish: true
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Artifacts'
+        inputs:
+          pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          artifactName: 'drop'
+
+- stage: 'deploy'
+  displayName: 'deploy'
+  jobs:
+  - deployment: 
+    pool:
+      vmImage: 'vs2017-win2016'
+    environment: '$(EnvironmentName)'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: AzureRMWebAppDeployment@4
+              displayName: Azure App service apiVersion
+              inputs:
+                appType: webApp
+                connectedServiceName: $(AzureSubscriptionEndpoint)
+                WebAppName: $(WebAppName)
+                Package: $(System.WorkFolder)/**/Server.zip
+                UseWebDeploy: true
+                DeploymentType: webDeploy
+
