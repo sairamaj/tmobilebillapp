@@ -32,7 +32,7 @@ namespace SelfService.Client
             builder.Services.AddMsalAuthentication(options =>
             {
                 builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
-                options.ProviderOptions.DefaultAccessTokenScopes.Add("https://sairamaapps.onmicrosoft.com/baf19ef3-9a3e-46e6-837e-008071b3bd36/user_impersonation");
+                options.ProviderOptions.DefaultAccessTokenScopes.Add("https://sairamaapps.onmicrosoft.com/0a080a72-57eb-4bd3-abe9-efc89389a1b8/user_impersonation");
             });
 
             //builder.Services.AddAuthorizationCore(options => options.AddAppPolicies());
