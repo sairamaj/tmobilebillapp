@@ -2,13 +2,13 @@ trigger:
   - master
 
 pool:
-  vmImage: "VS2017-Win2016"
+  vmImage: "ubuntu-20.04"
 
 variables:
   BuildConfiguration: 'Release'
   AzureSubscriptionEndpoint: 'visual-studio-enterprise'
-  WebAppName: learnforcause
-  EnvironmentName: learnforcause
+  WebAppName: sairama-tmobile
+  EnvironmentName: sairama-tmobile
 
 stages:
 - stage: 'build'
