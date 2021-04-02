@@ -41,6 +41,13 @@ namespace SelfService.Server.Controllers
         }
 
         [HttpGet]
+        [Route("/api/primarycontacts")]
+        public async Task<IEnumerable<PrimaryContact>> GetPrimaryContacts()
+        {
+            return await this.repository.GetPrimaryContacts();
+        }
+
+        [HttpGet]
         [Route("/api/links/bills/{yearMonth}")]
         public async Task<Link> GetBillDownloadLink(string yearMonth)
         {

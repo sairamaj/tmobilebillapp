@@ -51,9 +51,15 @@ namespace SelfService.Client.Repository
                        });
         }
 
-        public Task<IEnumerable<PrimaryContact>> GetPrimaryContacts()
+        public async Task<IEnumerable<PrimaryContact>> GetPrimaryContacts()
         {
-            throw new NotImplementedException($"we dont need in client.");
+            return await this.cacheManager.GetWithSet<IEnumerable<PrimaryContact>>(
+                          $"primary-contacts",
+                          Constants.UsersCacheExpiry,
+                          async () =>
+                      {
+                          return await this.http.GetFromJsonAsync<IEnumerable<PrimaryContact>>($"/api/primarycontacts");
+                      });
         }
 
         public async Task<IEnumerable<User>> GetUsers()

@@ -1,0 +1,40 @@
+@page "/reportbyyear/{year}"
+@inject IBillsRepository Repository
+@attribute [Authorize]
+@if (primaryUsers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MatAccordion Multi="true">
+        @foreach (var @primaryUser in @primaryUsers)
+        {
+            <MatExpansionPanel LazyRendering=true>
+                <MatExpansionPanelSummary>
+                    <MatExpansionPanelHeader>
+                        <div class="mat-layout-grid mat-layout-grid-align-left" style="max-width: 800px;">
+                            <div class="mat-layout-grid-inner">
+                                <div class="mat-layout-grid-cell" mat-layout-grid-cell-span-10>@primaryUser</div>
+                            </div>
+                        </div>
+                    </MatExpansionPanelHeader>
+                </MatExpansionPanelSummary>
+                <MatExpansionPanelDetails>
+                    <ReportByPrimary year="@Year" primary="@primaryUser"/>
+                </MatExpansionPanelDetails>
+            </MatExpansionPanel>
+        }
+    </MatAccordion>
+}
+
+@code{
+    [Parameter]
+    public string Year { get; set; }
+
+    private IEnumerable<string> primaryUsers;
+    protected override async Task OnInitializedAsync()
+    {
+        primaryUsers = (await Repository.GetPrimaryContacts()).Select(u=>u.Primary);
+    }
+}
