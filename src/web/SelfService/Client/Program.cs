@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MatBlazor;
 using Blazored.LocalStorage;
+using SelfService.Client.Repository;
+using SelfService.Shared;
 
 namespace SelfService.Client
 {
@@ -25,7 +27,8 @@ namespace SelfService.Client
 
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("SelfService.ServerAPI"));
-
+            builder.Services.AddScoped<IBillRepository, BillsRepository>();
+            builder.Services.AddScoped<ICacheManager, LocalStroageCacheManager>();
             builder.Services.AddMsalAuthentication(options =>
             {
                 builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);

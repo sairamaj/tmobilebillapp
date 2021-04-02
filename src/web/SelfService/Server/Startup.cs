@@ -1,3 +1,4 @@
+using System.Net.Http;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
 using Microsoft.AspNetCore.Builder;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SelfService.Server.Middleware;
+using SelfService.Server.Model;
 using SelfService.Server.Repository;
 
 namespace SelfService.Server
@@ -24,9 +26,10 @@ namespace SelfService.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IBillsRepository, BillsRepository>();
+            services.AddScoped<HttpClient, HttpClient>();
             services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
                 .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
-
+            services.Configure<ApiUrl>(op => { Configuration.Bind("ApiUrls", op); });
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddOptions();

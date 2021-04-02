@@ -1,6 +1,6 @@
 @page "/"
 @using SelfService.Shared
-@inject HttpClient Http
+@inject IBillRepository Repository
 @attribute [Microsoft.AspNetCore.Authorization.Authorize()]
 
 @if (bills == null)
@@ -34,7 +34,7 @@ else
     private IEnumerable<Bill> bills;
     protected override async Task OnInitializedAsync()
     {
-        bills = (await Http.GetFromJsonAsync<IEnumerable<Bill>>("api/bills"))
+        bills = (await Repository.GetBills())
             .OrderByDescending(b => b.Date).ToArray();
     }
 }
