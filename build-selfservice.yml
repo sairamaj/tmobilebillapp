@@ -27,7 +27,7 @@ stages:
         displayName: 'build'
         inputs:
           command: publish
-          projects: '**/*.csproj'
+          xprojects: 'src\web\SelfService\Server\SelfService.Server.csproj'
           arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
           zipAfterPublish: true
 
