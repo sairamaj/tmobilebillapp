@@ -23,7 +23,7 @@ stages:
         displayName: 'build'
         inputs:
           command: publish
-          projects: srcx\weby\SelfServicez\Server\SelfService.Server.csproj
+          projects: src\web\SelfService\Server\SelfService.Server.csproj
           arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
           zipAfterPublish: true
 
