@@ -19,6 +19,9 @@ stages:
       pool:
         vmImage: 'vs2017-win2016'
       steps:
+      - task: PowerShell@2
+        inputs:
+          script: pwd ; get-childitem -Recurse
       - task: DotNetCoreCLI@2
         displayName: 'build'
         inputs:
