@@ -7,8 +7,8 @@ pool:
 variables:
   BuildConfiguration: 'Release'
   AzureSubscriptionEndpoint: 'visual-studio-enterprise'
-  WebAppName: sairama-tmobile
-  EnvironmentName: sairama-tmobile
+  WebAppName: learnforcause
+  EnvironmentName: learnforcause
 
 stages:
 - stage: 'build'
@@ -19,17 +19,11 @@ stages:
       pool:
         vmImage: 'vs2017-win2016'
       steps:
-      - task: UseDotNet@2
-        displayName: 'Use .NET Core sdk'
-        inputs:
-          packageType: sdk
-          version: 3.1.x
-          installationPath: $(Agent.ToolsDirectory)/dotnet
       - task: DotNetCoreCLI@2
         displayName: 'build'
         inputs:
           command: publish
-          projects: srcXX\web\SelfService\Server\SelfService.Server.csproj
+          projects: src\web\SelfService\Server\SelfService.Server.csproj
           arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
           zipAfterPublish: true
 
@@ -59,4 +53,5 @@ stages:
                 Package: $(System.WorkFolder)/**/Server.zip
                 UseWebDeploy: true
                 DeploymentType: webDeploy
+
 
