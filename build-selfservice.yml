@@ -21,6 +21,7 @@ stages:
       steps:
       - task: PowerShell@2
         inputs:
+          targetType: inline
           script: pwd ; get-childitem -Recurse
       - task: DotNetCoreCLI@2
         displayName: 'build'
