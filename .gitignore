@@ -36,6 +36,5 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
-appsettings.json
 appsettings.Development.json
 .aws-sam
