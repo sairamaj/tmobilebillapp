@@ -11,11 +11,15 @@ using SelfService.Shared;
 
 namespace SelfService.Server.Repository
 {
-    class BillsRepository : IBillsRepository
+    internal class BillsRepository : IBillsRepository
     {
         private readonly HttpClient http;
+        private readonly ICacheManager cacheManager;
         ApiUrl _apiUrl;
-        public BillsRepository(IOptions<ApiUrl> apiUrlOptions, HttpClient http)
+        public BillsRepository(
+            IOptions<ApiUrl> apiUrlOptions,
+            HttpClient http,
+            ICacheManager cacheManager)
         {
             if (apiUrlOptions is null)
             {
@@ -29,14 +33,65 @@ namespace SelfService.Server.Repository
 
             this._apiUrl = apiUrlOptions.Value;
             this.http = http ?? throw new ArgumentNullException(nameof(http));
+            this.cacheManager = cacheManager ?? throw new ArgumentNullException(nameof(cacheManager));
         }
 
         public async Task<IEnumerable<Bill>> GetBills()
         {
-            return await GetBillsFromApi();
+            return await this.cacheManager.GetWithSet<IEnumerable<Bill>>(
+                           "bills",
+                           Constants.BillCacheExpiry,
+                           async () =>
+                       {
+                           return await GetBillsFromApi();
+                       });
         }
 
         public async Task<IEnumerable<BillDetail>> GetBillDetails(string yearMonth)
+        {
+            return await this.cacheManager.GetWithSet<IEnumerable<BillDetail>>(
+                        $"bills-details-{yearMonth}",
+                        Constants.BillDetailsCacheExpiry,
+                        async () =>
+                    {
+                        return await this.GetBillDetailsInternal(yearMonth);
+                    });
+        }
+
+        public async Task<IEnumerable<User>> GetUsers()
+        {
+            return (await GetPrimaryContacts()).SelectMany(p =>
+                    {
+                        return p.Users.Select(u =>
+                        {
+                            u.Primary = p.Primary;
+                            return u;
+                        });
+                    });
+        }
+
+        public async Task<IEnumerable<PrimaryContact>> GetPrimaryContacts()
+        {
+            return await this.cacheManager.GetWithSet<IEnumerable<PrimaryContact>>(
+                          $"primary-contacts",
+                          Constants.UsersCacheExpiry,
+                          async () =>
+                      {
+                          return await this.GetPrimaryContactsFromApi();
+                      });
+        }
+        public async Task<Link> GetDownloadLink(string yearMonth)
+        {
+            return await this.cacheManager.GetWithSet<Link>(
+                           $"bills-download-url-{yearMonth}",
+                           Constants.BillDetailsCacheExpiry,
+                           async () =>
+                       {
+                           return await this.GetDownloadUrlFromApi(yearMonth);
+                       });
+        }
+
+        private async Task<IEnumerable<BillDetail>> GetBillDetailsInternal(string yearMonth)
         {
             var users = await this.GetUsers();
             var primaryUsers = await this.GetPrimaryContacts();
@@ -62,32 +117,11 @@ namespace SelfService.Server.Repository
                 return b;
             });
         }
-
-        public async Task<IEnumerable<User>> GetUsers()
-        {
-            return (await GetPrimaryContacts()).SelectMany(p =>
-                    {
-                        return p.Users.Select(u =>
-                        {
-                            u.Primary = p.Primary;
-                            return u;
-                        });
-                    });
-        }
-
-        public async Task<IEnumerable<PrimaryContact>> GetPrimaryContacts()
-        {
-            return await this.GetPrimaryContactsFromApi();
-        }
-        public async Task<Link> GetDownloadLink(string yearMonth)
-        {
-            return await this.GetDownloadUrlFromApi(yearMonth);
-        }
-
         private async Task<IEnumerable<Bill>> GetBillsFromApi()
         {
             // GetFromJsonAsync fron Json extension cannot convert string to decimals.
             // Going back to Newtonsoft.Json Api.
+            System.Console.WriteLine($"--- GetBillsFrom-Api:" + this._apiUrl.BillsUrl);
             var response = await this.http.GetAsync(this._apiUrl.BillsUrl);
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<IEnumerable<Bill>>(await response.Content.ReadAsStringAsync());
@@ -96,6 +130,7 @@ namespace SelfService.Server.Repository
 
         private async Task<IEnumerable<BillDetail>> GetBillDetailsFromApi(string yearMonth)
         {
+            System.Console.WriteLine($"--- GetBillDetailsFrom-Api:" + string.Format(this._apiUrl.DetailsUrl, yearMonth));
             var response = await this.http.GetAsync(string.Format(this._apiUrl.DetailsUrl, yearMonth));
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<IEnumerable<BillDetail>>(await response.Content.ReadAsStringAsync());
@@ -103,13 +138,14 @@ namespace SelfService.Server.Repository
 
         private async Task<IEnumerable<PrimaryContact>> GetPrimaryContactsFromApi()
         {
+            System.Console.WriteLine($"--- GetPrimaryContactsFrom-Api:" + this._apiUrl.Users);
             return await this.http.GetFromJsonAsync<IEnumerable<PrimaryContact>>(this._apiUrl.Users);
         }
 
         private async Task<Link> GetDownloadUrlFromApi(string yearMonth)
         {
             System.Console.WriteLine($"--- DownloadLink-Api:" + string.Format(this._apiUrl.GetDownloadUrl, yearMonth));
-           return await this.http.GetFromJsonAsync<Link>(string.Format(this._apiUrl.GetDownloadUrl, yearMonth));
+            return await this.http.GetFromJsonAsync<Link>(string.Format(this._apiUrl.GetDownloadUrl, yearMonth));
         }
     }
 }

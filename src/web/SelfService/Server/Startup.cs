@@ -28,6 +28,7 @@ namespace SelfService.Server
         {
             services.AddTransient<IBillsRepository, BillsRepository>();
             services.AddScoped<HttpClient, HttpClient>();
+            services.AddScoped<ICacheManager, CacheManager>();
             services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
                 .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
             services.Configure<ApiUrl>(op => { Configuration.Bind("ApiUrls", op); });
