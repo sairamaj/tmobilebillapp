@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -6,7 +7,7 @@ using SelfService.Shared;
 
 namespace SelfService.Client.Repository
 {
-    internal class BillsRepository : IBillRepository
+    internal class BillsRepository : IBillsRepository
     {
         private readonly HttpClient http;
         private readonly ICacheManager cacheManager;
@@ -15,6 +16,17 @@ namespace SelfService.Client.Repository
         {
             this.http = http ?? throw new System.ArgumentNullException(nameof(http));
             this.cacheManager = cacheManager ?? throw new System.ArgumentNullException(nameof(cacheManager));
+        }
+
+        public async Task<IEnumerable<BillDetail>> GetBillDetails(string yearMonth)
+        {
+            return await this.cacheManager.GetWithSet<IEnumerable<BillDetail>>(
+                           $"bills-details-{yearMonth}",
+                           Constants.BillDetailsCacheExpiry,
+                           async () =>
+                       {
+                           return await this.http.GetFromJsonAsync<IEnumerable<BillDetail>>($"/api/bills/{yearMonth}");
+                       });
         }
 
         public async Task<IEnumerable<Bill>> GetBills()
@@ -26,6 +38,33 @@ namespace SelfService.Client.Repository
                        {
                            return await this.http.GetFromJsonAsync<IEnumerable<Bill>>("/api/bills");
                        });
+        }
+
+        public async Task<Link> GetDownloadLink(string yearMonth)
+        {
+            return await this.cacheManager.GetWithSet<Link>(
+                           $"bills-download-url-{yearMonth}",
+                           Constants.BillDetailsCacheExpiry,
+                           async () =>
+                       {
+                           return await this.http.GetFromJsonAsync<Link>($"/api/links/bills/{yearMonth}");
+                       });
+        }
+
+        public Task<IEnumerable<PrimaryContact>> GetPrimaryContacts()
+        {
+            throw new NotImplementedException($"we dont need in client.");
+        }
+
+        public async Task<IEnumerable<User>> GetUsers()
+        {
+            return await this.cacheManager.GetWithSet<IEnumerable<User>>(
+                          $"users",
+                          Constants.BillDetailsCacheExpiry,
+                          async () =>
+                      {
+                          return await this.http.GetFromJsonAsync<IEnumerable<User>>($"/api/users");
+                      });
         }
     }
 }

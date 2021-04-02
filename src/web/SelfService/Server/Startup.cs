@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using SelfService.Server.Middleware;
 using SelfService.Server.Model;
 using SelfService.Server.Repository;
+using SelfService.Shared;
 
 namespace SelfService.Server
 {

@@ -27,7 +27,7 @@ namespace SelfService.Client
 
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("SelfService.ServerAPI"));
-            builder.Services.AddScoped<IBillRepository, BillsRepository>();
+            builder.Services.AddScoped<IBillsRepository, BillsRepository>();
             builder.Services.AddScoped<ICacheManager, LocalStroageCacheManager>();
             builder.Services.AddMsalAuthentication(options =>
             {
