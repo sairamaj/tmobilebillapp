@@ -7,8 +7,8 @@ pool:
 variables:
   BuildConfiguration: 'Release'
   AzureSubscriptionEndpoint: 'visual-studio-enterprise'
-  WebAppName: sairama-tmobile
-  EnvironmentName: sairama-tmobile
+  WebAppName: tmobileplan
+  EnvironmentName: tmobileplan
 
 stages:
 - stage: 'build'
