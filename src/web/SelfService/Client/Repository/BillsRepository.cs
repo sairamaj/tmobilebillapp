@@ -20,6 +20,7 @@ namespace SelfService.Client.Repository
 
         public async Task<IEnumerable<BillDetail>> GetBillDetails(string yearMonth)
         {
+            await this.EnsureAuthorized();
             return await this.cacheManager.GetWithSet<IEnumerable<BillDetail>>(
                            $"bills-details-{yearMonth}",
                            Constants.BillDetailsCacheExpiry,
@@ -31,6 +32,7 @@ namespace SelfService.Client.Repository
 
         public async Task<IEnumerable<Bill>> GetBills()
         {
+            await this.EnsureAuthorized();
             return await this.cacheManager.GetWithSet<IEnumerable<Bill>>(
                            "bills",
                            Constants.BillCacheExpiry,
@@ -42,6 +44,7 @@ namespace SelfService.Client.Repository
 
         public async Task<Link> GetDownloadLink(string yearMonth)
         {
+            await this.EnsureAuthorized();
             return await this.cacheManager.GetWithSet<Link>(
                            $"bills-download-url-{yearMonth}",
                            Constants.BillDetailsCacheExpiry,
@@ -53,6 +56,7 @@ namespace SelfService.Client.Repository
 
         public async Task<IEnumerable<PrimaryContact>> GetPrimaryContacts()
         {
+            await this.EnsureAuthorized();
             return await this.cacheManager.GetWithSet<IEnumerable<PrimaryContact>>(
                           $"primary-contacts",
                           Constants.UsersCacheExpiry,
@@ -64,6 +68,7 @@ namespace SelfService.Client.Repository
 
         public async Task<IEnumerable<User>> GetUsers()
         {
+            await this.EnsureAuthorized();
             return await this.cacheManager.GetWithSet<IEnumerable<User>>(
                           $"users",
                           Constants.BillDetailsCacheExpiry,
@@ -71,6 +76,18 @@ namespace SelfService.Client.Repository
                       {
                           return await this.http.GetFromJsonAsync<IEnumerable<User>>($"/api/users");
                       });
+        }
+
+        // Temporary method till we implement full client authorization roles
+        // This will throw Un authorized(403) if user is not authorized.
+        public async Task EnsureAuthorized()
+        {
+            await this.http.GetFromJsonAsync<bool>("/api/authorized/state");
+        }
+
+        public Task<IDictionary<string, Role>> GetUserRoles()
+        {
+            throw new NotImplementedException("We dont need at client side now.");
         }
     }
 }

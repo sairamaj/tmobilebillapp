@@ -54,5 +54,14 @@ namespace SelfService.Server.Controllers
             System.Console.WriteLine($">>>>> Bill download link:{yearMonth} <<<<");
             return await this.repository.GetDownloadLink(yearMonth);
         }
+
+        // Temporary method till we implement roles in client also.
+        [HttpGet]
+        [Route("/api/authorized/state")]
+        public async Task<bool> IsAuthorized()
+        {
+            return await Task.FromResult(true);
+        }
+
     }
 }

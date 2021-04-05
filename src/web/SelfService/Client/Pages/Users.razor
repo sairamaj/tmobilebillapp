@@ -4,7 +4,10 @@
 @attribute [Authorize]
 @if (users == null)
 {
-    <p><em>Loading...</em></p>
+    @if(Error  == null)
+    {
+        <p><em>Loading...</em></p>
+    }
 }
 else
 {
@@ -24,10 +27,20 @@ else
 
 @code{
     private IEnumerable<User> users;
+    [CascadingParameter]
+    public Error Error { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        users = (await this.Repository.GetUsers())
-        .OrderBy(c => c.Primary)
-        .ThenBy(c => c.Name);
+        try
+        {
+            users = (await this.Repository.GetUsers())
+                .OrderBy(c => c.Primary)
+                .ThenBy(c => c.Name);
+        }
+        catch (Exception e)
+        {
+            Error.ProcessError(e);
+        }
     }
 }

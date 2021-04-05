@@ -3,7 +3,10 @@
 @attribute [Authorize]
 @if (years == null)
 {
-    <p><em>Loading...</em></p>
+    @if(Error  == null)
+    {
+        <p><em>Loading...</em></p>
+    }
 }
 else
 {
@@ -21,20 +24,29 @@ else
                     </MatExpansionPanelHeader>
                 </MatExpansionPanelSummary>
                 <MatExpansionPanelDetails>
-                    <ReportByYearComponent year="@year"/>
+                    <ReportByYearComponent year="@year" />
                 </MatExpansionPanelDetails>
             </MatExpansionPanel>
         }
     </MatAccordion>
-
 }
 
 @code{
     private IEnumerable<string> years;
+    [CascadingParameter]
+    public Error Error { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        years = (await this.Repository.GetBills())
-                    .Select(b => b.Date.ToString("yyyy"))
-                    .Distinct();
+        try
+        {
+            years = (await this.Repository.GetBills())
+                .Select(b => b.Date.ToString("yyyy"))
+                .Distinct();
+        }
+        catch (Exception e)
+        {
+            Error.ProcessError(e);
+        }
     }
 }

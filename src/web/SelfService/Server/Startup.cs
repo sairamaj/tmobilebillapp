@@ -35,7 +35,7 @@ namespace SelfService.Server
                 c.BaseAddress = new System.Uri(apiOptions.BaseUrl);
                 c.DefaultRequestHeaders.Add("x-api-key", apiOptions.ApiKey);
             });
-            services.AddScoped<ICacheManager, CacheManager>();
+            services.AddTransient<ICacheManager, CacheManager>();
             services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
                 .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
             services.Configure<ApiOptions>(op => { Configuration.Bind("ApiSettings", op); });

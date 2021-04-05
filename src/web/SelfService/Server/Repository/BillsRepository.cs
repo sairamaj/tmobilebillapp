@@ -4,9 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using SelfService.Server.Model;
 using SelfService.Shared;
 
 namespace SelfService.Server.Repository
@@ -78,8 +76,21 @@ namespace SelfService.Server.Repository
                        });
         }
 
-        private HttpClient Client {
-            get{
+        public async Task<IDictionary<string, Role>> GetUserRoles()
+        {
+            return await this.cacheManager.GetWithSet<IDictionary<string, Role>>(
+                           "userroles",
+                           Constants.UserRolesCacheExpiry,
+                           async () =>
+                       {
+                           return await this.GetUserRolesFromApi();
+                       });
+        }
+
+        private HttpClient Client
+        {
+            get
+            {
                 return this.clientFactory.CreateClient("t-mobile-api");
             }
         }
@@ -115,7 +126,8 @@ namespace SelfService.Server.Repository
             // GetFromJsonAsync fron Json extension cannot convert string to decimals.
             // Going back to Newtonsoft.Json Api.
             System.Console.WriteLine($"--- GetBillsFrom-Api:");
-            foreach(var h in this.Client.DefaultRequestHeaders){
+            foreach (var h in this.Client.DefaultRequestHeaders)
+            {
                 System.Console.WriteLine("-----------------------");
                 System.Console.WriteLine($"{h.Key}:{h.Value.First()}");
                 System.Console.WriteLine("-----------------------");
@@ -124,7 +136,6 @@ namespace SelfService.Server.Repository
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<IEnumerable<Bill>>(await response.Content.ReadAsStringAsync());
         }
-
 
         private async Task<IEnumerable<BillDetail>> GetBillDetailsFromApi(string yearMonth)
         {
@@ -136,7 +147,7 @@ namespace SelfService.Server.Repository
 
         private async Task<IEnumerable<PrimaryContact>> GetPrimaryContactsFromApi()
         {
-            System.Console.WriteLine($"--- GetPrimaryContactsFrom-Api:" );
+            System.Console.WriteLine($"--- GetPrimaryContactsFrom-Api:");
             return await this.Client.GetFromJsonAsync<IEnumerable<PrimaryContact>>("users");
         }
 
@@ -144,6 +155,15 @@ namespace SelfService.Server.Repository
         {
             System.Console.WriteLine($"--- DownloadLink-Api:" + yearMonth);
             return await this.Client.GetFromJsonAsync<Link>($"links/bills/{yearMonth}");
+        }
+
+        private async Task<IDictionary<string, Role>> GetUserRolesFromApi()
+        {
+            System.Console.WriteLine($"--- User roles -Api:");
+            // return await this.Client.GetFromJsonAsync<IDictionary<string,Role>>($"userroles");
+            await Task.Delay(0);
+            var roles = (JsonConvert.DeserializeObject<IEnumerable<Role>>(System.IO.File.ReadAllText(@"c:\temp\userroles.json")));
+            return new Dictionary<string, Role>(roles.ToDictionary(r => r.Name, r => r), StringComparer.OrdinalIgnoreCase);
         }
     }
 }
