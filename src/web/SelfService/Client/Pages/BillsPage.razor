@@ -4,7 +4,10 @@
 
 @if (bills == null)
 {
-    <p><em>Loading...</em></p>
+    @if(Error  == null)
+    {
+        <p><em>Loading...</em></p>
+    }
 }
 else
 {
@@ -32,9 +35,17 @@ else
 }
 @code{
     private IEnumerable<Bill> bills;
+        [CascadingParameter]
+public Error Error { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        bills = (await Repository.GetBills())
-            .OrderByDescending(b => b.Date).ToArray();
+        try
+        {
+            bills = (await Repository.GetBills()).OrderByDescending(b => b.Date).ToArray();
+        }
+        catch (Exception e)
+        {
+            Error.ProcessError(e);
+        }
     }
 }

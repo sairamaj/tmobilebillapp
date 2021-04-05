@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SelfService.Shared;
+using System.Collections.Generic;
 
 namespace SelfService.Server.Middleware
 {
@@ -21,22 +22,31 @@ namespace SelfService.Server.Middleware
         public async Task InvokeAsync(HttpContext context)
         {
             await Task.Delay(0);
-            this.logger.LogInformation($"InvokeAsync ...{context.User.GetEmail()}");
-            if (IsAdmin(context.User.GetEmail()))
+            foreach (var role in GetUserRoles(context.User.GetEmail()))
             {
-                this.logger.LogInformation("Adding administrators role");
+                this.logger.LogInformation($"Adding role: {role}");
                 ((ClaimsIdentity)context.User.Identity)
-                        .AddClaim(new Claim(ClaimTypes.Role, "Administrators", ClaimValueTypes.String));
+                        .AddClaim(new Claim(ClaimTypes.Role, role, ClaimValueTypes.String));
             }
 
             // Call the next delegate/middleware in the pipeline
             await next(context);
         }
 
-        private bool IsAdmin(string email)
+        private IEnumerable<string> GetUserRoles(string email)
         {
-            string[] currentAdmins = new string[] { "sairamaj@gmail.com", "srijamalapuram@gmail.com","radhachandra@gmail.com","rchandra02@outlook.com" };
-            return currentAdmins.Contains(email);
+            if (email == "unknown")
+            {
+                return new string[] { "Guest" };
+            }
+
+            this.logger.LogInformation($"Getting roles: {email}");
+            if(email == "srijamalapuram@gmail.com")
+            {
+                return new string[] { "Users" };
+            }
+            
+            return new string[] { "Guest" };
         }
     }
 }

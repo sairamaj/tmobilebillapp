@@ -12,6 +12,12 @@ namespace SelfService.Shared
             {
                 return "NA";
             }
+            foreach (var c in principal.Claims)
+            {
+                Console.WriteLine("-------------------------");
+                Console.WriteLine($"Cliam is: {c}");
+                Console.WriteLine("-------------------------");
+            }
 
             var nameClaim = principal.Claims.FirstOrDefault(c => c.Type == "name");
             return nameClaim == null ? "unknown" : nameClaim.Value;
@@ -24,8 +30,11 @@ namespace SelfService.Shared
                 return "NA";
             }
 
-            // foreach(var x in principal.Claims){
-            //     System.Console.WriteLine($"{x.Type} : {x.Value}");
+            // foreach (var c in principal.Claims)
+            // {
+            //     Console.WriteLine("-------------------------");
+            //     Console.WriteLine($"Cliam is: {c.Type}:{c.Value}");
+            //     Console.WriteLine("-------------------------");
             // }
 
             var emaliClaim = principal.Claims.FirstOrDefault(c => c.Type == "emails");
@@ -45,7 +54,8 @@ namespace SelfService.Shared
             }
 
             var idClaim = principal.Claims.FirstOrDefault(c => c.Type == "http://schemas.microsoft.com/identity/claims/objectidentifier");
-            if( idClaim == null){
+            if (idClaim == null)
+            {
                 throw new ArgumentException($"http://schemas.microsoft.com/identity/claims/objectidentifier not found.");
             }
 
@@ -65,7 +75,8 @@ namespace SelfService.Shared
             }
 
             var idClaim = principal.Claims.FirstOrDefault(c => c.Type == claimType);
-            if( idClaim == null){
+            if (idClaim == null)
+            {
                 throw new ArgumentException($"{claimType} not found.");
             }
 

@@ -7,7 +7,7 @@ using SelfService.Server.Repository;
 
 namespace SelfService.Server.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Users")]
     [ApiController]
     [Route("[controller]")]
     public class BillsController
