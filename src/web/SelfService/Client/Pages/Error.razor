@@ -20,7 +20,7 @@
     {
         Logger.LogError("Error:ProcessError - Type: {Type} Message: {Message}",
             ex.GetType(), ex.Message);
-        errorMessage = $"Error: {ex.GetType()} Message: {ex.Message}";
+        errorMessage = $"Error: {ex.GetType()} Message: {ex.Message} : {ex}";
         this.StateHasChanged();
     }
 }
