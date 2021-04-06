@@ -9,13 +9,13 @@ namespace SelfService.Client.Repository
 {
     internal class BillsRepository : IBillsRepository
     {
-        private readonly HttpClient http;
         private readonly ICacheManager cacheManager;
+        private readonly IHttpClientFactory clientFactory;
 
-        public BillsRepository(HttpClient http, ICacheManager cacheManager)
+        public BillsRepository(IHttpClientFactory clientFactory, ICacheManager cacheManager)
         {
-            this.http = http ?? throw new System.ArgumentNullException(nameof(http));
-            this.cacheManager = cacheManager ?? throw new System.ArgumentNullException(nameof(cacheManager));
+            this.clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+            this.cacheManager = cacheManager ?? throw new ArgumentNullException(nameof(cacheManager));
         }
 
         public async Task<IEnumerable<BillDetail>> GetBillDetails(string yearMonth)
@@ -26,7 +26,7 @@ namespace SelfService.Client.Repository
                            Constants.BillDetailsCacheExpiry,
                            async () =>
                        {
-                           return await this.http.GetFromJsonAsync<IEnumerable<BillDetail>>($"/api/bills/{yearMonth}");
+                           return await this.Client.GetFromJsonAsync<IEnumerable<BillDetail>>($"/api/bills/{yearMonth}");
                        });
         }
 
@@ -38,7 +38,7 @@ namespace SelfService.Client.Repository
                            Constants.BillCacheExpiry,
                            async () =>
                        {
-                           return await this.http.GetFromJsonAsync<IEnumerable<Bill>>("/api/bills");
+                           return await this.Client.GetFromJsonAsync<IEnumerable<Bill>>("/api/bills");
                        });
         }
 
@@ -50,7 +50,7 @@ namespace SelfService.Client.Repository
                            Constants.BillDetailsCacheExpiry,
                            async () =>
                        {
-                           return await this.http.GetFromJsonAsync<Link>($"/api/links/bills/{yearMonth}");
+                           return await this.Client.GetFromJsonAsync<Link>($"/api/links/bills/{yearMonth}");
                        });
         }
 
@@ -62,7 +62,7 @@ namespace SelfService.Client.Repository
                           Constants.UsersCacheExpiry,
                           async () =>
                       {
-                          return await this.http.GetFromJsonAsync<IEnumerable<PrimaryContact>>($"/api/primarycontacts");
+                          return await this.Client.GetFromJsonAsync<IEnumerable<PrimaryContact>>($"/api/primarycontacts");
                       });
         }
 
@@ -74,7 +74,7 @@ namespace SelfService.Client.Repository
                           Constants.BillDetailsCacheExpiry,
                           async () =>
                       {
-                          return await this.http.GetFromJsonAsync<IEnumerable<User>>($"/api/users");
+                          return await this.Client.GetFromJsonAsync<IEnumerable<User>>($"/api/users");
                       });
         }
 
@@ -82,12 +82,22 @@ namespace SelfService.Client.Repository
         // This will throw Un authorized(403) if user is not authorized.
         public async Task EnsureAuthorized()
         {
-            await this.http.GetFromJsonAsync<bool>("/api/authorized/state");
+
+            await this.Client.GetFromJsonAsync<bool>("/api/authorized/state");
         }
 
         public Task<IDictionary<string, Role>> GetUserRoles()
         {
             throw new NotImplementedException("We dont need at client side now.");
         }
+
+        private HttpClient Client
+        {
+            get
+            {
+                return this.clientFactory.CreateClient("TMobile.ServerAPI");
+            }
+        }
+
     }
 }

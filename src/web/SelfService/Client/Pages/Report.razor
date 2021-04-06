@@ -42,9 +42,6 @@ else
                 .Select(b => b.Date.ToString("yyyy"))
                 .Distinct();
         }
-        catch(AccessTokenNotAvailableException e){
-            e.Redirect();
-        }
         catch (Exception e)
         {
             Error.ProcessError(e);

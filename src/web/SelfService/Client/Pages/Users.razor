@@ -36,9 +36,6 @@ else
                 .OrderBy(c => c.Primary)
                 .ThenBy(c => c.Name);
         }
-        catch(AccessTokenNotAvailableException e){
-            e.Redirect();
-        }
         catch (Exception e)
         {
             Error.ProcessError(e);

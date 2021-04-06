@@ -41,9 +41,6 @@ else
         {
             bills = (await Repository.GetBills()).OrderByDescending(b => b.Date).ToArray();
         }
-        catch(AccessTokenNotAvailableException e){
-            e.Redirect();
-        }
         catch (Exception e)
         {
             Error.ProcessError(e);
