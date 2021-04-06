@@ -92,6 +92,26 @@ Resources:
     Policies:
       - DynamoDBCrudPolicy:
           TableName: !Ref TMobileTable
+  
+  TMobileUserRolesApiFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: tmobile/
+      Handler: app.lambda_user_roles_handler
+      Runtime: python3.8
+      Timeout: 90
+      Events:
+        TMobile:
+          Type: Api 
+          Properties:
+            Path: /api/phone/roles
+            Method: get
+            Auth:
+              ApiKeyRequired: true
+    Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref TMobileTable
+
   TMobileTable:
     Type: AWS::DynamoDB::Table
     Properties:

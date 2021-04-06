@@ -35,7 +35,7 @@ def execute_query(pk, sk=None):
 
 def lambda_users_handler(event, context):
 
-    response = execute_query('Users')
+    response = execute_query('Users','Details')
     if len(response) > 0:
         users = response[0]["Value"]
     else:
@@ -116,3 +116,24 @@ def lambda_bill_get_download_url(event, context):
         },
         "body": json.dumps({"url": url})
     }
+
+
+def lambda_user_roles_handler(event, context):
+    
+    response = execute_query('Users', 'Roles')
+
+    if len(response) > 0:
+        user_roles = response[0]["Value"]
+    else:
+        user_roles = '[]'
+
+    return {
+        "statusCode": 200,
+        'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,GET'
+        },
+        "body": user_roles
+    }
+

@@ -11,6 +11,7 @@ dynamodb = boto3.resource(
     'dynamodb'
 )
 
+
 table = dynamodb.Table('TMobile')
 
 class Primary:
@@ -19,11 +20,11 @@ class Primary:
 
 
 users = table.query(
-    KeyConditionExpression=Key('Name').eq('Users')& Key('Type').begins_with('Details')
+    KeyConditionExpression=Key('Name').eq('Users')& Key('Type').begins_with('Roles')
 )
 
 #print(users["Items"])
 if len(users["Items"]) > 0:
     print(users["Items"][0]["Value"])
 else:
-    print('no users found')
+    print('no roles found')

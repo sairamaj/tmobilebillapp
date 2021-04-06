@@ -1,1 +1,1 @@
-sam local start-api --docker-network abp-sam-backend
+sam local start-api --docker-network abp-sam-backend -p 6000

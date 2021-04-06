@@ -10,10 +10,12 @@ dynamodb = boto3.resource(
 
 table = dynamodb.Table('TMobile')
 
-with open ("c:\\sai\\dev\\temp\\pdf\\tmobile\\users.json", "r") as f:
-    data=f.read()
+with open("c:\\sai\\dev\\temp\\pdf\\tmobile\\users.json", "r") as f:
+    data = f.read()
+
+#print(data)
 table.put_item(
-   Item={
+    Item={
         'Name': 'Users',
         'Type': 'Details',
         'Value': data

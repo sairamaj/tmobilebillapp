@@ -160,9 +160,7 @@ namespace SelfService.Server.Repository
         private async Task<IDictionary<string, Role>> GetUserRolesFromApi()
         {
             System.Console.WriteLine($"--- User roles -Api:");
-            // return await this.Client.GetFromJsonAsync<IDictionary<string,Role>>($"userroles");
-            await Task.Delay(0);
-            var roles = (JsonConvert.DeserializeObject<IEnumerable<Role>>(System.IO.File.ReadAllText(@"c:\temp\userroles.json")));
+            var roles =  await this.Client.GetFromJsonAsync<IEnumerable<Role>>("roles");
             return new Dictionary<string, Role>(roles.ToDictionary(r => r.Name, r => r), StringComparer.OrdinalIgnoreCase);
         }
     }
