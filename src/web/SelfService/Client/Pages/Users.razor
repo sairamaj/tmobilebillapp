@@ -1,5 +1,6 @@
 @page "/users"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject IBillsRepository Repository
 @attribute [Authorize]
 @if (users == null)
@@ -34,6 +35,9 @@ else
             users = (await this.Repository.GetUsers())
                 .OrderBy(c => c.Primary)
                 .ThenBy(c => c.Name);
+        }
+        catch(AccessTokenNotAvailableException e){
+            e.Redirect();
         }
         catch (Exception e)
         {

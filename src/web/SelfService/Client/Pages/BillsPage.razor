@@ -1,4 +1,5 @@
 @page "/"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject IBillsRepository Repository
 @attribute [Authorize()]
 
@@ -39,6 +40,9 @@ else
         try
         {
             bills = (await Repository.GetBills()).OrderByDescending(b => b.Date).ToArray();
+        }
+        catch(AccessTokenNotAvailableException e){
+            e.Redirect();
         }
         catch (Exception e)
         {

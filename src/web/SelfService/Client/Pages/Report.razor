@@ -1,4 +1,5 @@
 @page "/reports"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject IBillsRepository Repository
 @attribute [Authorize]
 @if (years == null)
@@ -40,6 +41,9 @@ else
             years = (await this.Repository.GetBills())
                 .Select(b => b.Date.ToString("yyyy"))
                 .Distinct();
+        }
+        catch(AccessTokenNotAvailableException e){
+            e.Redirect();
         }
         catch (Exception e)
         {
