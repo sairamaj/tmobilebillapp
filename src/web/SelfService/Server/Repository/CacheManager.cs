@@ -23,7 +23,7 @@ namespace SelfService.Server.Repository
 
             var newVal = await func();
 
-            var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(expiry);
+            var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(expiry);
 
             // Save data in cache.
             cache.Set(key, newVal, cacheEntryOptions);
