@@ -87,6 +87,17 @@ namespace SelfService.Server.Repository
                        });
         }
 
+        public async Task<IEnumerable<Payment>> GetPayments()
+        {
+            return await this.cacheManager.GetWithSet<IEnumerable<Payment>>(
+                           "payments",
+                           Constants.PaymentsCacheExpiry,
+                           async () =>
+                       {
+                           return await this.GetPaymentsFromApi();
+                       });
+        }
+
         private HttpClient Client
         {
             get
@@ -144,6 +155,15 @@ namespace SelfService.Server.Repository
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<IEnumerable<BillDetail>>(await response.Content.ReadAsStringAsync());
         }
+
+        public async Task<IEnumerable<Payment>> GetPaymentsFromApi()
+        {
+            System.Console.WriteLine($"--- GetPayments:" );
+            var response = await this.Client.GetAsync($"payments");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<IEnumerable<Payment>>(await response.Content.ReadAsStringAsync());
+        }
+
 
         private async Task<IEnumerable<PrimaryContact>> GetPrimaryContactsFromApi()
         {

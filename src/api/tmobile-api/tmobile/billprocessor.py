@@ -1,7 +1,8 @@
-import glob
-import tabula
 import boto3
-import os
+import tabula
+from tabula.io import read_pdf
+from urllib.parse import unquote_plus
+import uuid
 from decimal import Decimal
 
 numberOfLines = 12
@@ -22,8 +23,6 @@ def toAmount(val):
     if val.strip() == '-':
         return 0.0
     return float(val.lstrip('$'))
-
-
 
 class EntryParser:
     def __init__(self, ds_columns):
@@ -86,14 +85,12 @@ def parseBill(fileName):
 
     return entryParser.perLine, planAmount, finalAmount, entries
 
-
 def display(entries):
     print(f"{'Number':^18}|{'Amount':^12}|{'Equipment':^12}|{'Services':^12}|{'One Time':^12}|{'Total':^12}")
     for entry in entries:
         print(
             f"{entry.number:^18}|{entry.amount:^12.2f}|{entry.equipment:^12}|{entry.services:^12}|{entry.onetime_charge:^12}|{entry.total:^12.2f}")
     print('______________________________________________________')
-
 
 def validate(file, billAmount, entires):
     entriesTotal = 0
@@ -110,27 +107,15 @@ def validate(file, billAmount, entires):
         print(f'Bill Total: {billAmount:.2f}')
         print(f'Total: from entries:{entriesTotal:.2f}')
 
-
-def save(month, entries):
-    file = f'{month}.txt'
-    with open(file, 'w') as writer:
-        writer.write(
-            f"{'Number':^18}|{'Amount':^12}|{'Equipment':^12}|{'Services':^12}|{'One Time':^12}|{'Total':^12}\n")
-        for entry in entries:
-            writer.write(
-                f"{entry.number:^18}|{entry.amount:^12.2f}|{entry.equipment:^12}|{entry.services:^12}|{entry.onetime_charge:^12}|{entry.total:^12.2f}\n")
-    print(f"{file} saved.")
-
-
 def upload(month, finalBill, perline, entries):
 
+    # dynamodb = boto3.resource(
+    #     'dynamodb',
+    #     endpoint_url='http://localhost:8000'
+    # )
     dynamodb = boto3.resource(
-         'dynamodb',
-         endpoint_url='http://localhost:8000'
-     )
-    #dynamodb = boto3.resource(
-     #   'dynamodb'
-    #)
+        'dynamodb'
+    )
 
     table = dynamodb.Table('TMobile')
     print(f'bill month:{month}')
@@ -160,25 +145,16 @@ def upload(month, finalBill, perline, entries):
             }
         )
 
-for file in glob.glob('c:\\sai\\dev\\temp\\pdf\\tmobile\\*.pdf'):
-    print(f' parsing : {file}')
-    perLine, planAmount, billAmount, entries = parseBill(file)
-    
-    # display to view.
+def lambda_bill_processor_handler(event, context):
+  s3_client = boto3.client('s3')
+  for record in event['Records']:
+    bucket = record['s3']['bucket']['name']
+    key = unquote_plus(record['s3']['object']['key'])
+    tmpkey = key.replace('/', '')
+    download_path = '/tmp/{}{}'.format(uuid.uuid4(), tmpkey)
+    print(f'downloading: {bucket}:{key}:{download_path}')
+    s3_client.download_file(bucket, key, download_path)
+    print('parsing the bill!')
+    perLine, planAmount, billAmount, entries = parseBill(download_path)
+    print('displaying the entries!')
     display(entries)
-    print(f'final amount:{billAmount:.2f}')
-    print(f'plan Amount:{planAmount:.2f}')
-    print(f'perLine:{perLine:.2f}')
-
-    # validate the bill for amounts.
-    validate(file, billAmount, entries)
-    
-    # save for local testing
-    head, tail = os.path.split(file)
-    month = os.path.splitext(tail)[0]
-    month = month[len('SummaryBill'):]
-    #save(month, entries)
-
-    # upload
-    upload(month, billAmount, perLine, entries)
-        

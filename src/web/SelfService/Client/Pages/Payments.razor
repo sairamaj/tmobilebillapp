@@ -1,0 +1,45 @@
+@page "/payments"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject IBillsRepository Repository
+@attribute [Authorize]
+@if (payments == null)
+{
+   <p><em>Loading...</em></p>
+}
+else
+{
+    <MatTable Items="@payments" class="mat-elevation-z5" ShowPaging="false" PageSize=40>
+        <MatTableHeader>
+            <th>Name</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Method</th>
+        </MatTableHeader>
+        <MatTableRow>
+            <td>@context.Type</td>
+            <td>@context.Amount</td>
+            <td>@context.Date</td>
+            <td>@context.Method</td>
+        </MatTableRow>
+    </MatTable>
+}
+
+@code{
+    private IEnumerable<Payment> payments;
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            payments = (await this.Repository.GetPayments())
+                .OrderBy(c => c.Date);
+        }
+        catch (Exception e)
+        {
+            Error.ProcessError(e);
+        }
+    }
+}

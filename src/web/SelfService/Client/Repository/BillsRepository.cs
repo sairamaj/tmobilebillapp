@@ -82,7 +82,6 @@ namespace SelfService.Client.Repository
         // This will throw Un authorized(403) if user is not authorized.
         public async Task EnsureAuthorized()
         {
-
             await this.Client.GetFromJsonAsync<bool>("/api/authorized/state");
         }
 
@@ -90,6 +89,18 @@ namespace SelfService.Client.Repository
         {
             throw new NotImplementedException("We dont need at client side now.");
         }
+
+        public async Task<IEnumerable<Payment>> GetPayments()
+        {
+             await this.EnsureAuthorized();
+            return await this.cacheManager.GetWithSet<IEnumerable<Payment>>(
+                          $"payments",
+                          Constants.PaymentsCacheExpiry,
+                          async () =>
+                      {
+                          return await this.Client.GetFromJsonAsync<IEnumerable<Payment>>($"/api/payments");
+                      });
+       }
 
         private HttpClient Client
         {

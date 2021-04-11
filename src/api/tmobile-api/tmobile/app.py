@@ -3,7 +3,6 @@ import os
 import boto3
 from boto3.dynamodb.conditions import Key
 
-
 def execute_query(pk, sk=None):
     table_name = os.environ.get('TABLE_NAME', 'TMobile')
     aws_environment_local = os.getenv('AWS_SAM_LOCAL')
