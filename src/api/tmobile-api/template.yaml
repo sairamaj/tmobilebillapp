@@ -135,14 +135,14 @@ Resources:
     Type: AWS::Serverless::Function 
     Properties:
       CodeUri: tmobile/
-      Handler: payments.lambda_payments_bymonth_handler
+      Handler: payments.lambda_payments_byuser_handler
       Runtime: python3.8
       Timeout: 90
       Events:
         TMobile:
           Type: Api 
           Properties:
-            Path: /api/phone/payments/{yearMonth}
+            Path: /api/phone/payments/user/{user}
             Method: get
             Auth:
               ApiKeyRequired: true

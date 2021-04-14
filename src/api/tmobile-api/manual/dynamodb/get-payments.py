@@ -33,5 +33,11 @@ def execute_query(pk, sk=None):
 
     return response["Items"]
 
-payments = execute_query('Payments')
+payments = execute_query('Payments','Payment')
+print(payments)
+print('===================================')
+payments = execute_query('Payments','User1')
+print(payments)
+print('+++++++++++++++++++++')
+payments = execute_query('Payments','Jan2020',True)
 print(payments)

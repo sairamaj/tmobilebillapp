@@ -15,12 +15,14 @@ else
             <th>Amount</th>
             <th>Date</th>
             <th>Method</th>
+            <th>Comment</th>
         </MatTableHeader>
         <MatTableRow>
-            <td>@context.Type</td>
+            <td>@context.User</td>
+            <td>@context.DateString</td>
             <td>@context.Amount</td>
-            <td>@context.Date</td>
             <td>@context.Method</td>
+            <td>@context.Comment</td>
         </MatTableRow>
     </MatTable>
 }

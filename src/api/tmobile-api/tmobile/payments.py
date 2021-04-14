@@ -33,7 +33,7 @@ def execute_query(pk, sk=None):
 
 def lambda_payments_handler(event, context):
 
-    response = execute_query('Payments')
+    response = execute_query('Payments','Payment')
 
     if len(response) > 0:
         payments = response
@@ -50,10 +50,10 @@ def lambda_payments_handler(event, context):
         "body": json.dumps(payments)
     }
 
-def lambda_payments_bymonth_handler(event, context):
+def lambda_payments_byuser_handler(event, context):
 
-    yearMonth = event['pathParameters']['yearMonth']
-    response = execute_query('Payments', f'{yearMonth}')
+    user = event['pathParameters']['user']
+    response = execute_query('Payments', user)
 
     if len(response) > 0:
         payments = response

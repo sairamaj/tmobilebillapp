@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace SelfService.Shared
 {
@@ -8,7 +9,9 @@ namespace SelfService.Shared
         public string Type { get; set; }
         public double Amount { get; set; }
         public DateTime Date { get; set; }
+        public string DateString => Date.ToString("mm/dd/yyyy");
         public string Method { get; set; }
-        public string User => this.Type;
+        public string Comment { get; set; }
+        public string User => this.Type.Split('_').Last();
     }
 }

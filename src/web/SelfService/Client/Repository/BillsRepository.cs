@@ -92,7 +92,7 @@ namespace SelfService.Client.Repository
 
         public async Task<IEnumerable<Payment>> GetPayments()
         {
-             await this.EnsureAuthorized();
+            await this.EnsureAuthorized();
             return await this.cacheManager.GetWithSet<IEnumerable<Payment>>(
                           $"payments",
                           Constants.PaymentsCacheExpiry,
@@ -100,7 +100,19 @@ namespace SelfService.Client.Repository
                       {
                           return await this.Client.GetFromJsonAsync<IEnumerable<Payment>>($"/api/payments");
                       });
-       }
+        }
+
+        public async Task<IEnumerable<MonthlyPayment>> GetMonthlyPayments(string number)
+        {
+            await this.EnsureAuthorized();
+            return await this.cacheManager.GetWithSet<IEnumerable<MonthlyPayment>>(
+                          $"monthly_payments",
+                          Constants.PaymentsCacheExpiry,
+                          async () =>
+                      {
+                          return await this.Client.GetFromJsonAsync<IEnumerable<MonthlyPayment>>($"/api/payments/user/{number}");
+                      });
+        }
 
         private HttpClient Client
         {

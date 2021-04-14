@@ -25,5 +25,13 @@ namespace SelfService.Server.Controllers
         {
             return await this.repository.GetPayments();
         }
+
+        [HttpGet]
+        [Route("api/payments/user/{number}")]
+        public async Task<IEnumerable<MonthlyPayment>> GetMonthlyPayments(string number)
+        {
+            return await this.repository.GetMonthlyPayments(number);
+        }
+        
     }
 }

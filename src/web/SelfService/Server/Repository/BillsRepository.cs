@@ -132,6 +132,18 @@ namespace SelfService.Server.Repository
                 return b;
             });
         }
+
+        public async Task<IEnumerable<MonthlyPayment>> GetMonthlyPayments(string user)
+        {
+            return await this.cacheManager.GetWithSet<IEnumerable<MonthlyPayment>>(
+                           "monthly_payments",
+                           Constants.PaymentsCacheExpiry,
+                           async () =>
+            {
+                return await this.GetMonthlyPaymentsFromApi(user);
+            });
+        }
+
         private async Task<IEnumerable<Bill>> GetBillsFromApi()
         {
             // GetFromJsonAsync fron Json extension cannot convert string to decimals.
@@ -158,7 +170,7 @@ namespace SelfService.Server.Repository
 
         public async Task<IEnumerable<Payment>> GetPaymentsFromApi()
         {
-            System.Console.WriteLine($"--- GetPayments:" );
+            System.Console.WriteLine($"--- GetPayments:");
             var response = await this.Client.GetAsync($"payments");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<IEnumerable<Payment>>(await response.Content.ReadAsStringAsync());
@@ -180,8 +192,16 @@ namespace SelfService.Server.Repository
         private async Task<IDictionary<string, Role>> GetUserRolesFromApi()
         {
             System.Console.WriteLine($"--- User roles -Api:");
-            var roles =  await this.Client.GetFromJsonAsync<IEnumerable<Role>>("roles");
+            var roles = await this.Client.GetFromJsonAsync<IEnumerable<Role>>("roles");
             return new Dictionary<string, Role>(roles.ToDictionary(r => r.Name, r => r), StringComparer.OrdinalIgnoreCase);
+        }
+
+        public async Task<IEnumerable<MonthlyPayment>> GetMonthlyPaymentsFromApi(string number)
+        {
+            System.Console.WriteLine($"--- GetPayments:");
+            var response = await this.Client.GetAsync($"payments/user/{number}");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<IEnumerable<MonthlyPayment>>(await response.Content.ReadAsStringAsync());
         }
     }
 }

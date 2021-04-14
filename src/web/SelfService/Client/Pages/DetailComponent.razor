@@ -47,5 +47,6 @@ else
         }
 
         details = (await this.Repository.GetBillDetails(this.YearMonth)).OrderBy(d => d.Name);
+        var monthlyPayments = (await this.Repository.GetMonthlyPayments(""));
     }
 }

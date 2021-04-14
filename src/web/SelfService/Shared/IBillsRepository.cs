@@ -13,5 +13,6 @@ namespace SelfService.Shared
         Task<Link> GetDownloadLink(string yearMonth);
         Task<IDictionary<string,Role>> GetUserRoles();
         Task<IEnumerable<Payment>> GetPayments();
+        Task<IEnumerable<MonthlyPayment>> GetMonthlyPayments(string number);
     }
 }

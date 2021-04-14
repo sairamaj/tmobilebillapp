@@ -170,3 +170,19 @@ sam local invoke "TMobileFunction" -e event.json
 [Not to use Filters](https://www.alexdebrie.com/posts/dynamodb-filter-expressions/)
 [SAM Events](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction)
 [ADB2C Integration with Functions](https://stackoverflow.com/questions/64866476/how-to-secure-an-azure-function-accessed-by-a-blazor-wasm-app-with-azure-ad-b2c)
+
+```cmd
+Payments   Payment_User1  date: amount: method: comment:2020
+Payments   User1_Jan2020   
+Payments   User1_Feb2020
+Payments   User1_Mar2020
+
+
+Payments
+   Payment_*
+Payments-User1
+   Payment-User1
+Payment
+   *_<month>
+
+```

@@ -8,7 +8,7 @@ namespace SelfService.Shared
         public decimal Total { get; set; }
         public decimal PerLine { get; set; }
 
-                // bill date will be of "Summary_Apr2020" format.
+        // bill date will be of "Summary_Apr2020" format.
         public string YearMonth => this.Type.Substring("Summary_".Length);
         public DateTime Date
         {
@@ -24,5 +24,6 @@ namespace SelfService.Shared
         }
 
         public string DateAsString => this.Date.ToString("MMM yyyy");
-        public string PdfDownloadLink {get; set;}
-    }}
+        public string PdfDownloadLink { get; set; }
+    }
+}

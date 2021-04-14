@@ -17,9 +17,23 @@ table = dynamodb.Table('TMobile')
 table.put_item(
    Item={
         'Name': 'Payments',
-        'Type': 'Apr2020User1',
-        'Amount': "{:.2f}".format(floatToDecimal(3.33)),
-        'Date': '04/01/2020',
-        'Method': 'PayPal'
+        'Type': 'Payment_User1',
+        'Amount': "{:.2f}".format(floatToDecimal(233.10)),
+        'Date': '04/12/2020',
+        'Method': 'PayPal',
+        'Comment': 'For 2020'
     }
 )
+
+yearMonths = ['Jan2020','Feb2020','Mar2020']
+user = 'User1'
+for y in yearMonths:
+    print()
+    table.put_item(
+   Item={
+        'Name': 'Payments',
+        'Type': f'{user}_{y}'
+    }
+)
+
+
