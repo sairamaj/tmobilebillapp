@@ -196,10 +196,10 @@ namespace SelfService.Server.Repository
             return new Dictionary<string, Role>(roles.ToDictionary(r => r.Name, r => r), StringComparer.OrdinalIgnoreCase);
         }
 
-        public async Task<IEnumerable<MonthlyPayment>> GetMonthlyPaymentsFromApi(string number)
+        public async Task<IEnumerable<MonthlyPayment>> GetMonthlyPaymentsFromApi(string yearMonth)
         {
             System.Console.WriteLine($"--- GetPayments:");
-            var response = await this.Client.GetAsync($"payments/user/{number}");
+            var response = await this.Client.GetAsync($"payments/{yearMonth}");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<IEnumerable<MonthlyPayment>>(await response.Content.ReadAsStringAsync());
         }

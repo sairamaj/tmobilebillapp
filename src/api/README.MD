@@ -173,9 +173,9 @@ sam local invoke "TMobileFunction" -e event.json
 
 ```cmd
 Payments   Payment_User1  date: amount: method: comment:2020
-Payments   User1_Jan2020   
-Payments   User1_Feb2020
-Payments   User1_Mar2020
+Payments   Jan2020_Number1   
+Payments   Jan2020_Number2
+Payments   Feb2020_Number1
 
 
 Payments

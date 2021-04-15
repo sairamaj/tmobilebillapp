@@ -102,7 +102,7 @@ namespace SelfService.Client.Repository
                       });
         }
 
-        public async Task<IEnumerable<MonthlyPayment>> GetMonthlyPayments(string number)
+        public async Task<IEnumerable<MonthlyPayment>> GetMonthlyPayments(string yearMonth)
         {
             await this.EnsureAuthorized();
             return await this.cacheManager.GetWithSet<IEnumerable<MonthlyPayment>>(
@@ -110,7 +110,7 @@ namespace SelfService.Client.Repository
                           Constants.PaymentsCacheExpiry,
                           async () =>
                       {
-                          return await this.Client.GetFromJsonAsync<IEnumerable<MonthlyPayment>>($"/api/payments/user/{number}");
+                          return await this.Client.GetFromJsonAsync<IEnumerable<MonthlyPayment>>($"/api/payments/{yearMonth}");
                       });
         }
 

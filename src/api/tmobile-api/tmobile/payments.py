@@ -50,10 +50,10 @@ def lambda_payments_handler(event, context):
         "body": json.dumps(payments)
     }
 
-def lambda_payments_byuser_handler(event, context):
+def lambda_payments_by_yearMonth_handler(event, context):
 
-    user = event['pathParameters']['user']
-    response = execute_query('Payments', user)
+    yearMonth = event['pathParameters']['yearMonth']
+    response = execute_query('Payments', yearMonth)
 
     if len(response) > 0:
         payments = response

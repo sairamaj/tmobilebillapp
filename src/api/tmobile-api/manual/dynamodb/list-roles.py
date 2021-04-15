@@ -7,11 +7,11 @@ dynamodb = boto3.resource(
     'dynamodb',
     endpoint_url='http://127.0.0.1:8000'
 )
-dynamodb = boto3.resource(
-    'dynamodb'
-)
+# dynamodb = boto3.resource(
+#     'dynamodb'
+# )
 
-
+print(dynamodb)
 table = dynamodb.Table('TMobile')
 
 class Primary:
