@@ -1,10 +1,7 @@
 import boto3
+import sys
+import uuid
 from decimal import Decimal
-
-
-def floatToDecimal(val):
-    return Decimal(format(val, ".15g"))
-
 
 # Get the service resource.
 dynamodb = boto3.resource(
@@ -26,39 +23,26 @@ class Payment:
         self.Date = parts[2]
         self.Method = parts[3]
         self.Comment = parts[4]
-        self.Id = parts[5]
+        self.Id = str(uuid.uuid1())
 
-
-paymentSkip = False
-with open("c:\\sai\\dev\\temp\\pdf\\tmobile\\payments1.txt", "r") as f:
+paymentFile = sys.argv[1]
+with open(paymentFile, "r") as f:
     for line in f:
         line = line.strip('\n')
-        if paymentSkip == False:
-            payment = Payment(line)
-            print(f'adding :{payment.Name}:{payment.Id}')
-            table.put_item(
-                Item={
-                    'Name': 'Payments',
-                    'Type': f'Payment_{payment.Name}',
-                    'Amount': payment.Amount,
-                    'Date': payment.Date,
-                    'Method': payment.Method,
-                    'Comment': payment.Comment,
-                    'Id': payment.Id
-                }
-            )
-            print('added!')
-            paymentSkip = True
-        else:
-            print('adding for months!')
-            number,month = line.split('|')
-            print(f'adding :{number}:{month}')
-            table.put_item(
-                Item={
-                    'Name': 'Payments',
-                    'Type': f'{month}_Payments',
-                    'Number': number,
-                    'Id': payment.Id
-                }
-            )
-    
+        payment = Payment(line)
+        print(f'adding :{payment.Name}:{payment.Id}')
+        table.put_item(
+            Item={
+                'Name': 'Payments',
+                'Type': f'Payment_{payment.Name}_{payment.Id}',
+                'Amount': payment.Amount,
+                'Date': payment.Date,
+                'Method': payment.Method,
+                'Comment': payment.Comment,
+                'Id': payment.Id
+            }
+        )
+        print('added!')
+
+
+

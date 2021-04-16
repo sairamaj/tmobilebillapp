@@ -1,12 +1,12 @@
 import boto3
 # Get the service resource.
-# dynamodb = boto3.resource(
-#     'dynamodb',
-#     endpoint_url='http://localhost:8000'
-# )
 dynamodb = boto3.resource(
-    'dynamodb'
-)
+     'dynamodb',
+     endpoint_url='http://localhost:8000'
+ )
+#dynamodb = boto3.resource(
+#    'dynamodb'
+#)
 
 table = dynamodb.Table('TMobile')
 

@@ -12,8 +12,8 @@ else
     <MatTable Items="@payments" class="mat-elevation-z5" ShowPaging="false" PageSize=40>
         <MatTableHeader>
             <th>Name</th>
-            <th>Amount</th>
             <th>Date</th>
+            <th>Amount</th>
             <th>Method</th>
             <th>Comment</th>
         </MatTableHeader>
@@ -37,7 +37,7 @@ else
         try
         {
             payments = (await this.Repository.GetPayments())
-                .OrderBy(c => c.Date);
+                .OrderByDescending(c => c.Date);
         }
         catch (Exception e)
         {

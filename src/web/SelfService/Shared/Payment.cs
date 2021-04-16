@@ -9,9 +9,17 @@ namespace SelfService.Shared
         public string Type { get; set; }
         public double Amount { get; set; }
         public DateTime Date { get; set; }
-        public string DateString => Date.ToString("mm/dd/yyyy");
+        public string DateString => Date.ToString("MM/dd/yyyy");
         public string Method { get; set; }
         public string Comment { get; set; }
-        public string User => this.Type.Split('_').Last();
+        public string User {
+            get{
+                var parts = this.Type.Split('_');
+                if( parts.Length > 2){
+                    return parts[1];
+                }
+                return "NA";
+            }
+        }
     }
 }

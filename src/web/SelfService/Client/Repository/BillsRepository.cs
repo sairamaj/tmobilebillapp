@@ -82,7 +82,8 @@ namespace SelfService.Client.Repository
         // This will throw Un authorized(403) if user is not authorized.
         public async Task EnsureAuthorized()
         {
-            await this.Client.GetFromJsonAsync<bool>("/api/authorized/state");
+            await Task.Delay(0);
+            // await this.Client.GetFromJsonAsync<bool>("/api/authorized/state");
         }
 
         public Task<IDictionary<string, Role>> GetUserRoles()
