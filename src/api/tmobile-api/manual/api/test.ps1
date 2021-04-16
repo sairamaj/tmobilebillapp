@@ -6,4 +6,4 @@ invoke-restmethod http://localhost:$Port/api/phone/users | Format-List
 #invoke-restmethod http://localhost:$Port/api/phone/bills/Apr2020 | Format-List
 #invoke-restmethod http://localhost:$Port/api/phone/links/bills/Apr2020 | Format-List
 invoke-restmethod http://localhost:$Port/api/phone/payments | Format-List
-invoke-restmethod http://localhost:$Port/api/phone/payments/Apr2021 | Format-List
+invoke-restmethod http://localhost:$Port/api/phone/payments/Jan2020 | Format-List

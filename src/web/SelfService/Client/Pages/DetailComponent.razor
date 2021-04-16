@@ -7,7 +7,7 @@
 }
 else
 {
-<MatButtonLink Href="@pdfDownloadLink" Target="_blank">Download T-Mobile Bill</MatButtonLink>
+    <MatButtonLink Href="@pdfDownloadLink" Target="_blank">Download T-Mobile Bill</MatButtonLink>
     <MatTable Items="@details" class="mat-elevation-z5" ShowPaging="false" PageSize=40>
         <MatTableHeader>
             <th>Name</th>
@@ -17,6 +17,7 @@ else
             <th>Services</th>
             <th>One Time Charges</th>
             <th>Total</th>
+            <th>Paid?</th>
         </MatTableHeader>
         <MatTableRow>
             <td>@context.Name</td>
@@ -26,13 +27,28 @@ else
             <td>@context.Services</td>
             <td>@context.OneTimeCharge</td>
             <td>@context.Total</td>
-        </MatTableRow>
-    </MatTable>
+            @if (@context.IsPaid)
+        {
+        <MatThemeProvider Theme="@paidTheme">
+            <MatButton Icon="favorite">Paid</MatButton>
+        </MatThemeProvider>
+        }
+        else
+        {
+        <MatThemeProvider Theme="@notPaidTheme">
+            <MatButton>Not Paid</MatButton>
+        </MatThemeProvider>
+        }
+    </MatTableRow>
+</MatTable>
 }
 @code{
     [Parameter]
     public string YearMonth { get; set; }
     public string pdfDownloadLink { get; set; }
+
+    [CascadingParameter]
+    public Error Error { get; set; }
 
     private IEnumerable<BillDetail> details;
     protected override async Task OnInitializedAsync()
@@ -40,13 +56,29 @@ else
         try
         {
             pdfDownloadLink = (await this.Repository.GetDownloadLink(this.YearMonth)).Url;
+            details = (await this.Repository.GetBillDetails(this.YearMonth)).OrderBy(d => d.Name);
+            var monthlyPayments = (await this.Repository.GetMonthlyPayments(this.YearMonth));
+            foreach (var detail in details)
+            {
+                detail.IsPaid = monthlyPayments.FirstOrDefault(m => m.Number == detail.Number) != null;
+            }
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Error generating the link:{this.YearMonth} {e}");
+            Error.ProcessError(e);
         }
-
-        details = (await this.Repository.GetBillDetails(this.YearMonth)).OrderBy(d => d.Name);
-        var monthlyPayments = (await this.Repository.GetMonthlyPayments(this.YearMonth));
     }
+
+    MatTheme paidTheme = new MatTheme()
+    {
+        Primary = "green",
+        Secondary = "orange"
+    };
+
+    MatTheme notPaidTheme = new MatTheme()
+    {
+        Primary = MatThemeColors.Orange._500.Value,
+        Secondary = MatThemeColors.BlueGrey._500.Value
+    };
+
 }

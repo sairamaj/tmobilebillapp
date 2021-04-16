@@ -106,7 +106,7 @@ namespace SelfService.Client.Repository
         {
             await this.EnsureAuthorized();
             return await this.cacheManager.GetWithSet<IEnumerable<MonthlyPayment>>(
-                          $"monthly_payments",
+                          $"monthly_payments_{yearMonth}",
                           Constants.PaymentsCacheExpiry,
                           async () =>
                       {

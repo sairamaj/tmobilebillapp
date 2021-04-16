@@ -23,14 +23,20 @@ namespace SelfService.Server.Controllers
         [Route("/api/payments")]
         public async Task<IEnumerable<Payment>> GetPayments()
         {
+            System.Console.WriteLine("GetPayments...");
             return await this.repository.GetPayments();
         }
 
         [HttpGet]
-        [Route("api/payments/{yearMonth}")]
+        [Route("/api/payments/{yearMonth}")]
         public async Task<IEnumerable<MonthlyPayment>> GetMonthlyPayments(string yearMonth)
         {
-            return await this.repository.GetMonthlyPayments(yearMonth);
+            System.Console.WriteLine($"GetMonthlyPayments: {yearMonth}");
+            var payments =  await this.repository.GetMonthlyPayments(yearMonth);
+            foreach(var payment in payments){
+                System.Console.WriteLine($"{payment.Type}:{payment.Number}");
+            }
+            return payments;
         }
         
     }

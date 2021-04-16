@@ -5,7 +5,8 @@ namespace SelfService.Shared
 {
     public class MonthlyPayment
     {
-        public string Number {get;}
-        public string YearMonth {get;}
+        public string Type { get; set; }
+        public string Number { get; set; }
+        public string YearMonth => this.Type.Split('_').First();
     }
 }

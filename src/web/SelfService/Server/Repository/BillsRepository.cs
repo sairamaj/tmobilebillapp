@@ -133,14 +133,14 @@ namespace SelfService.Server.Repository
             });
         }
 
-        public async Task<IEnumerable<MonthlyPayment>> GetMonthlyPayments(string user)
+        public async Task<IEnumerable<MonthlyPayment>> GetMonthlyPayments(string yearMonth)
         {
             return await this.cacheManager.GetWithSet<IEnumerable<MonthlyPayment>>(
-                           "monthly_payments",
+                           $"monthly_payments_{yearMonth}",
                            Constants.PaymentsCacheExpiry,
                            async () =>
             {
-                return await this.GetMonthlyPaymentsFromApi(user);
+                return await this.GetMonthlyPaymentsFromApi(yearMonth);
             });
         }
 

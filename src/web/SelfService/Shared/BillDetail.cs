@@ -14,6 +14,6 @@ namespace SelfService.Shared
         public decimal OneTimeCharge { get; set; }
         public decimal Total { get; set; }
         public bool IsAbovePlan => (this.Total - this.PlanAmount) > 5.0m;
-        public DateTime? PaidDate {get;set;}
+        public bool IsPaid { get; set; }
     }
 }
