@@ -63,5 +63,11 @@ namespace SelfService.Server.Controllers
             return await Task.FromResult(true);
         }
 
+        [HttpGet]
+        [Route("/api/bills/resources/{name}")]
+        public async Task<IEnumerable<Resource>> GetResources(string name)
+        {
+            return await this.repository.GetResources(name);
+        }
     }
 }

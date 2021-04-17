@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using SelfService.Shared;
 
@@ -13,12 +15,16 @@ namespace SelfService.Server.Repository
     {
         private readonly IHttpClientFactory clientFactory;
         private readonly ICacheManager cacheManager;
+        private readonly IWebHostEnvironment environment;
+
         public BillsRepository(
             IHttpClientFactory clientFactory,
-            ICacheManager cacheManager)
+            ICacheManager cacheManager,
+            IWebHostEnvironment environment)
         {
             this.clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
             this.cacheManager = cacheManager ?? throw new ArgumentNullException(nameof(cacheManager));
+            this.environment = environment ?? throw new ArgumentNullException(nameof(environment));
         }
 
         public async Task<IEnumerable<Bill>> GetBills()
@@ -202,6 +208,26 @@ namespace SelfService.Server.Repository
             var response = await this.Client.GetAsync($"payments/{yearMonth}");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<IEnumerable<MonthlyPayment>>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task<IEnumerable<Resource>> GetResources(string name)
+        {
+            var homePageResources = Path.Combine(this.environment.WebRootPath, "Resources", name);
+            var resources = new List<Resource>();
+            foreach (var file in Directory.GetFiles(homePageResources, "*.MD"))
+            {
+                var title = Path.GetFileNameWithoutExtension(file);
+                var orderInfo = title.Split('_').First();
+                title = title.Substring(orderInfo.Length + 1);
+                resources.Add(new Resource
+                {
+                    Order = System.Convert.ToInt32(orderInfo),
+                    Title = title,
+                    Info = await File.ReadAllTextAsync(file)
+                });
+            }
+
+            return resources;
         }
     }
 }

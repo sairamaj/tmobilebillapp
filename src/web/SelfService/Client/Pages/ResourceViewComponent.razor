@@ -1,0 +1,45 @@
+@page "/resourceviewcomponent"
+@inject IBillsRepository Repository
+
+@using SelfService.Shared
+@using System.Linq
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject HttpClient Http
+
+@if( resources == null)
+{
+        <p><em>Loading...</em></p>
+}
+else
+{
+    <MatAccordion Multi="true">
+        @foreach(var resource in resources.OrderBy(r=> r.Order)){
+<MatExpansionPanel>
+                    <MatExpansionPanelSummary>
+                        <MatExpansionPanelHeader>@resource.Title</MatExpansionPanelHeader>
+                    </MatExpansionPanelSummary>
+                    <MatExpansionPanelDetails>
+                        <p>@((MarkupString) @resource.InfoAsMarkdown)</p>
+                    </MatExpansionPanelDetails>
+                </MatExpansionPanel>            
+        }
+    </MatAccordion>
+}
+
+@code{
+    [Parameter]
+    public string ResourceName {get; set;}
+    IEnumerable<Resource> resources;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            resources = await this.Repository.GetResources("bills");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+}

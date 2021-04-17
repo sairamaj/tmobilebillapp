@@ -9,5 +9,6 @@ namespace SelfService.Client
         public static TimeSpan BillDetailsCacheExpiry = new TimeSpan(10, 0, 0);
         public static TimeSpan PaymentsCacheExpiry = new TimeSpan(10, 0, 0);
         public static TimeSpan DownloadUrlCacheExpiry = new TimeSpan(0, 5, 0);
+        public static TimeSpan ResourcesExpiry = new TimeSpan(0, 30, 0);
     }
 }
