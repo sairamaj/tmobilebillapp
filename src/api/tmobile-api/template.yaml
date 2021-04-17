@@ -167,5 +167,4 @@ Resources:
       ProvisionedThroughput: 
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
-  sairama-t-mobile:
-    Type: AWS::S3::Bucket        
+  
