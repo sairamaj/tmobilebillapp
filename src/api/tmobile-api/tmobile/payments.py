@@ -38,7 +38,7 @@ def lambda_payments_handler(event, context):
     if len(response) > 0:
         payments = response
     else:
-        payments = '[]'
+        payments = []
 
     return {
         "statusCode": 200,
@@ -58,7 +58,7 @@ def lambda_payments_by_yearMonth_handler(event, context):
     if len(response) > 0:
         payments = response
     else:
-        payments = '[]'
+        payments = []
 
     return {
         "statusCode": 200,

@@ -8,6 +8,7 @@
 else
 {
     <p>Year Total:<b>&nbsp;@yearTotal</b></p>
+    <p>Total Paid:<b>&nbsp;@totalPaidByUser</b></p>
     <MatTable Items="@userBillDetailsByYearMonth" class="mat-elevation-z5" ShowPaging="false" PageSize=40>
         <MatTableHeader>
             <th>Month</th>
@@ -28,35 +29,89 @@ else
     public string Primary { get; set; }
 
     private decimal yearTotal;
+    private string totalPaidByUser = "Loading...";
 
-    private IDictionary<string,decimal> userBillDetailsByYearMonth;
+
+    private IDictionary<string, decimal> userBillDetailsByYearMonth;
     protected override async Task OnInitializedAsync()
     {
         var users = await Repository.GetPrimaryContacts();
         // todo
         // create api for the year also
-        var byMonth = new Dictionary<string,decimal>();
+        var byMonth = new Dictionary<string, decimal>();
         yearTotal = 0.0m;
         foreach (var month in new string[]
-            { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-            })
+        { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        })
         {
             var billDetails = await Repository.GetBillDetails($"{month}{Year}");
-            if(billDetails.Any())
+            if (billDetails.Any())
             {
                 byMonth[month] = (await Repository.GetBillDetails($"{month}{Year}"))
-                .Where( b => b.Primary == this.Primary)
+                .Where(b => b.Primary == this.Primary)
                 .Sum(b => b.Total);
-                
+
                 yearTotal += byMonth[month];
             }
-            
-            if(this.Year ==  System.DateTime.Now.Year.ToString() && System.DateTime.Now.ToString("MMM") == month){
-                break;  // stop after current month in this year.
+
+            if (this.Year == System.DateTime.Now.Year.ToString() && System.DateTime.Now.ToString("MMM") == month)
+            {
+                break; // stop after current month in this year.
             }
 
         }
 
         userBillDetailsByYearMonth = byMonth;
+        var task = this.GetPaidInYearByUser();
     }
+
+    protected async Task GetPaidInYearByUser()
+    {
+        var users = await Repository.GetPrimaryContacts();
+        var totalPaid = 0.0m;
+        var currentPrimayUser = users.FirstOrDefault(u => u.Primary == this.Primary);
+        if (currentPrimayUser == null)
+        {
+            totalPaidByUser = "NA";
+            this.StateHasChanged();
+            return;
+        }
+
+        // todo
+        // create api for the year also
+        var byMonth = new Dictionary<string, decimal>();
+        foreach (var month in new string[]
+        { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        })
+        {
+            var monthlyPayments = await Repository.GetMonthlyPayments($"{month}{Year}");
+            foreach (var user in currentPrimayUser.Users)
+            {
+                var foundPaymentForPhone = monthlyPayments.FirstOrDefault(m => m.Number == user.Phone);
+                if (foundPaymentForPhone != null)
+                {
+                    totalPaid += (await GetUserMonthlyBill(month, this.Year, foundPaymentForPhone.Number));
+                }
+            }
+            if (this.Year == System.DateTime.Now.Year.ToString() && System.DateTime.Now.ToString("MMM") == month)
+            {
+                break; // stop after current month in this year.
+            }
+        }
+
+        totalPaidByUser = totalPaid.ToString();
+        this.StateHasChanged();
+    }
+
+    private async Task<decimal> GetUserMonthlyBill(string month, string year, string number)
+    {
+        var userBillDetail = (await Repository.GetBillDetails($"{month}{year}"))
+        .FirstOrDefault(b => b.Number == number);
+        if (userBillDetail != null)
+        {
+            return userBillDetail.Total;
+        }
+        return 0.0m;
+    }
+
 }

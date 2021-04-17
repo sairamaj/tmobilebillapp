@@ -14,10 +14,31 @@ dynamodb = boto3.resource(
 
 table = dynamodb.Table('TMobile')
 
-print(dynamodb)
+
+class MonthlyPayment:
+    def __init__(self, table, parts, id):
+        self.Table = table
+        self.Number = parts[0]
+        self.YearMonth = parts[1]
+        self.Id = id
+
+    def add(self):
+        table.put_item(
+            Item={
+                'Name': 'Payments',
+                'Type': f'{self.YearMonth}_{self.Number}',
+                'Number': self.Number,
+                'Id': self.Id
+            }
+        )
+
+    def display(self):
+        print(f'{self.Number}|{self.YearMonth}|{self.Id}')
+
+
 class Payment:
-    def __init__(self, line):
-        parts = line.split('|')
+    def __init__(self, table, parts):
+        self.Table = table
         self.Name = parts[0]
         self.Amount = parts[1]
         self.Date = parts[2]
@@ -25,12 +46,7 @@ class Payment:
         self.Comment = parts[4]
         self.Id = str(uuid.uuid1())
 
-paymentFile = sys.argv[1]
-with open(paymentFile, "r") as f:
-    for line in f:
-        line = line.strip('\n')
-        payment = Payment(line)
-        print(f'adding :{payment.Name}:{payment.Id}')
+    def add(self):
         table.put_item(
             Item={
                 'Name': 'Payments',
@@ -42,7 +58,33 @@ with open(paymentFile, "r") as f:
                 'Id': payment.Id
             }
         )
-        print('added!')
+
+    def display(self):
+        print(f'{self.Name}|{self.Date}|{self.Amount}|{self.Comment}|{self.Id}')
 
 
+class Factory:
+    def __init__(self, table):
+        self.Table = table
 
+    def get_payment(self, line):
+        parts = line.split('|')
+        if parts[0] == 'Payment':
+            self.LastPayment = Payment(self.Table, parts[1:])
+            return self.LastPayment
+        if parts[0] == 'Apply':
+            if self.LastPayment == None:
+                raise "PAYMENT record should have exists before APPLY"
+            return MonthlyPayment(self.Table, parts[1:], self.LastPayment.Id)
+        return None
+
+
+paymentFile = sys.argv[1]
+factory = Factory(table)
+with open(paymentFile, "r") as f:
+    for line in f:
+        line = line.strip('\n')
+        payment = factory.get_payment(line)
+        if payment != None:
+            payment.display()
+            payment.add()
