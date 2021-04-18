@@ -8,7 +8,19 @@
 else
 {
     <p>Year Total:<b>&nbsp;@yearTotal</b></p>
-    <p>Total Paid:<b>&nbsp;@totalPaidByUser</b></p>
+    @if(paidStatus == PaidStatus.FullPaid)
+    {
+        <p>Total Paid:&nbsp;<b><font color="green">@totalPaidByUser</font></b></p>
+    }
+    else if(paidStatus == PaidStatus.PartialPaid)
+    {
+        <p>Total Paid:&nbsp;<b><font color="purple">@totalPaidByUser</font></b></p>
+    }
+    else
+    {
+        <p>Total Paid:&nbsp;<b><font color="red">@totalPaidByUser</font></b></p>
+    }
+    
     <MatTable Items="@userBillDetailsByYearMonth" class="mat-elevation-z5" ShowPaging="false" PageSize=40>
         <MatTableHeader>
             <th>Month</th>
@@ -30,7 +42,13 @@ else
 
     private decimal yearTotal;
     private string totalPaidByUser = "Loading...";
-
+    PaidStatus paidStatus = PaidStatus.NotPaid;
+    private enum PaidStatus
+    {
+        NotPaid,
+        PartialPaid,
+        FullPaid
+    }
 
     private IDictionary<string, decimal> userBillDetailsByYearMonth;
     protected override async Task OnInitializedAsync()
@@ -99,6 +117,14 @@ else
             }
         }
 
+        if( System.Math.Abs(yearTotal-totalPaid) <0.01m)
+        {
+            paidStatus = PaidStatus.FullPaid;
+        }
+        else if(totalPaid > 0.01m){
+            paidStatus = PaidStatus.PartialPaid;
+        }
+        
         totalPaidByUser = totalPaid.ToString();
         this.StateHasChanged();
     }
@@ -111,6 +137,7 @@ else
         {
             return userBillDetail.Total;
         }
+
         return 0.0m;
     }
 

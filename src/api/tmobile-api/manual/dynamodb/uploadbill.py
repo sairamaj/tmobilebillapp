@@ -124,13 +124,13 @@ def save(month, entries):
 
 def upload(month, finalBill, perline, entries):
 
-    dynamodb = boto3.resource(
-         'dynamodb',
-         endpoint_url='http://localhost:8000'
-     )
     #dynamodb = boto3.resource(
-     #   'dynamodb'
-    #)
+    #     'dynamodb',
+    #     endpoint_url='http://localhost:8000'
+    # )
+    dynamodb = boto3.resource(
+       'dynamodb'
+    )
 
     table = dynamodb.Table('TMobile')
     print(f'bill month:{month}')
@@ -160,7 +160,7 @@ def upload(month, finalBill, perline, entries):
             }
         )
 
-for file in glob.glob('c:\\sai\\dev\\temp\\pdf\\tmobile\\*.pdf'):
+for file in glob.glob('c:\\sai\\dev\\temp\\pdf\\tmobile\\latest\\*.pdf'):
     print(f' parsing : {file}')
     perLine, planAmount, billAmount, entries = parseBill(file)
     
