@@ -1,1 +1,1 @@
-sam local generate-event s3 put --bucket sairama-t-mobile --key SummaryBillJan2020.pdf | sam local invoke -e - TMobileBillProcessorApiFunction
+sam local generate-event s3 put --bucket sairama-t-mobile --key SummaryBillJan2020.pdf | sam local invoke -e - TMobilePdfProcessingFunction

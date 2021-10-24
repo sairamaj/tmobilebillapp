@@ -150,6 +150,20 @@ Resources:
       - DynamoDBCrudPolicy:
           TableName: !Ref TMobileTable
 
+  TMobilePdfProcessingFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: tmobile/
+      Handler: billprocessor.lambda_bill_processor_handler
+      Runtime: python3.8
+      Timeout: 90
+      Events:
+        MyUploadEvent:
+          Type: S3
+          Properties:
+            Id: !Ref sairama-t-mobile
+            Events: Create      
+
   TMobileTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -168,3 +182,5 @@ Resources:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
   
+  sairama-t-mobile:
+    Type: AWS::S3::Bucket
