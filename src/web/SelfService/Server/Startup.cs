@@ -31,8 +31,14 @@ namespace SelfService.Server
             // services.AddScoped<HttpClient, HttpClient>();
             services.AddHttpClient("t-mobile-api", c =>
             {
-                var apiOptions = services.BuildServiceProvider().GetService<IOptions<ApiOptions>>().Value;
-                c.BaseAddress = new System.Uri(apiOptions.BaseUrl);
+                //var apiOptions = services.BuildServiceProvider().GetService<IOptions<ApiOptions>>().Value;
+				var apiOptions = new ApiOptions()
+				{
+					BaseUrl = "https://9roffaomve.execute-api.us-west-2.amazonaws.com/Prod/api/phone/",
+					ApiKey = "WcrEfScoft9YXryd4no201h4xzN9ZrHB5vuqsur1",
+				};
+
+				c.BaseAddress = new System.Uri(apiOptions.BaseUrl);
                 c.DefaultRequestHeaders.Add("x-api-key", apiOptions.ApiKey);
             });
             services.AddTransient<ICacheManager, CacheManager>();
