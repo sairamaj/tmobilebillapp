@@ -1,0 +1,46 @@
+@page "/debug"
+@using Microsoft.AspNetCore.Authorization
+@inject IDebugRepository Repository
+@attribute [Authorize]
+
+
+@if (debugInfoItems == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MatTable Items="@debugInfoItems" class="mat-elevation-z5" ShowPaging="false" PageSize=40>
+        <MatTableHeader>
+            <th>Key</th>
+            <th>Value</th>
+        </MatTableHeader>
+        <MatTableRow>
+            <td>@context.Key</td>
+            <td>@context.Value</td>
+        </MatTableRow>
+    </MatTable>
+
+}
+
+@code {
+    private DebugInfo debugInfo;
+    private IDictionary<string, string> debugInfoItems;
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            this.debugInfo = await this.Repository.GetDebugInfo();
+            this.debugInfoItems = new Dictionary<string,string>();
+            this.debugInfoItems["ApiBaseAddress"] = this.debugInfo.ApiBaseAddress;
+            this.debugInfoItems["ApiKey"] = this.debugInfo.ApiKey;
+        }
+        catch (Exception e)
+        {
+            Error.ProcessError(e);
+        }
+    }
+}
