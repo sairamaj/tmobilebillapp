@@ -8,7 +8,7 @@ using SelfService.Shared;
 
 namespace SelfService.Server.Controllers
 {
-    [Authorize(Roles = "Users")]
+   // [Authorize(Roles = "Users")]
 	[ApiController]
 	[Route("[controller]")]
 	public class DebugController
