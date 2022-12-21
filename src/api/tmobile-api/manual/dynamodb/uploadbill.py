@@ -4,7 +4,7 @@ import boto3
 import os
 from decimal import Decimal
 
-numberOfLines = 12
+numberOfLines = 10
 
 def floatToDecimal(val):
     return Decimal(format(val, ".15g"))
@@ -81,7 +81,11 @@ def parseBill(fileName):
             entryParser.perLine = planAmount/numberOfLines
 
         if row >= 2:
-            entries.append(entryParser.parse(val))
+            #print(f'val:{val}')
+            if val[0].__contains__('Suspend'):
+                print('ignoring Suspend line.')
+            else:
+                entries.append(entryParser.parse(val))
         row = row+1
 
     return entryParser.perLine, planAmount, finalAmount, entries
@@ -180,5 +184,5 @@ for file in glob.glob('c:\\sai\\dev\\temp\\pdf\\tmobile\\latest\\*.pdf'):
     #save(month, entries)
 
     # upload
-    upload(month, billAmount, perLine, entries)
+    #upload(month, billAmount, perLine, entries)
         
