@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <UserSecretsId>SelfService.Server-6F03A390-9F6A-451B-9026-765E350B148A</UserSecretsId>
   </PropertyGroup>
 
