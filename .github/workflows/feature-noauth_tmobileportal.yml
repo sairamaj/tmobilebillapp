@@ -25,7 +25,7 @@ jobs:
         run: dotnet build --configuration Release src\web\SelfService\Server\SelfService.Server.csproj
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp src\web\SelfService\Server\SelfService.Server.csproj
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp src\web\SelfService\Server\SelfService.Server.csproj"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
