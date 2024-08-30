@@ -36,8 +36,8 @@ namespace SelfService.Server
                 c.DefaultRequestHeaders.Add("x-api-key", apiOptions.ApiKey);
             });
             services.AddTransient<ICacheManager, CacheManager>();
-            services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
-                .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
+            // services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
+            //     .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
             services.Configure<ApiOptions>(op => { Configuration.Bind("ApiSettings", op); });
             services.AddControllersWithViews();
             services.AddRazorPages();

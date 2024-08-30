@@ -1,6 +1,6 @@
 @page "/reportbyprimaryuser/{year}/{primary}"
 @inject IBillsRepository Repository
-@attribute [Authorize]
+@* @attribute [Authorize] *@
 @if (userBillDetailsByYearMonth == null)
 {
     <p><em>Loading...</em></p>
