@@ -118,7 +118,7 @@ namespace SelfService.Client.Repository
         public async Task<IEnumerable<Resource>> GetResources(string name)
         {
             return await this.cacheManager.GetWithSet<IEnumerable<Resource>>(
-                          $"resources_{name}",
+                            $"resources_{name}",
                           Constants.ResourcesExpiry,
                           async () =>
                       {

@@ -32,7 +32,7 @@ namespace SelfService.Server
             services.AddHttpClient("t-mobile-api", c =>
             {
                 var apiOptions = services.BuildServiceProvider().GetService<IOptions<ApiOptions>>().Value;
-                c.BaseAddress = new System.Uri(apiOptions.BaseUrl);
+				c.BaseAddress = new System.Uri(apiOptions.BaseUrl);
                 c.DefaultRequestHeaders.Add("x-api-key", apiOptions.ApiKey);
             });
             services.AddTransient<ICacheManager, CacheManager>();
