@@ -5,7 +5,7 @@ from boto3.dynamodb.conditions import Key
 # Get the service resource.
 dynamodb = boto3.resource(
     'dynamodb',
-    endpoint_url='http://127.0.0.1:8000'
+    #endpoint_url='http://127.0.0.1:8000'
 )
 
 table = dynamodb.Table('TMobile')

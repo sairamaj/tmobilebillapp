@@ -1,0 +1,92 @@
+You are a helpful assistant. Given the following T-Mobile bill summary table, extract the cost per phone number in JSON format.
+
+Plan details:
+There is basic amount of 80.81 and each additional line gets 10. there are taxes and govt fees. We want these charges 
+for everyone to be the same. The equipment and services are for each line separately. The suspended line is separate and 
+does not participate in group level charges.
+
+{{
+  "(503) 111-2222": {{
+    "plan": 21.87,
+    "equipment": 25.00,
+    "services": 0.00,
+    "total": 46.87
+  }},
+  ...
+}}
+
+add per line amount which is plan amount for non suspended line, month name in bill summary.
+round of all amounts to 2 decimals.
+
+add bill summary with following:
+- total amount
+- equipment total
+- services total
+- verification to see that total = (total plan amount generated + total equipment + total service)
+- verified_flag (true/false. the match of total and can deviate by $1)
+
+use below user data and add the name information
+```json
+[
+    {
+        "name": "Sru",
+        "phone": "(503) 442-2175",
+        "primary": "Sai`"
+    },
+    {
+        "name": "Sri",
+        "phone": "(971) 336-6816",
+        "primary": "Sai"
+    },
+    {
+        "name": "Sou",
+        "phone": "(971) 336-6813",
+        "primary": "Sai"
+    },
+    {
+        "name": "Jay",
+        "phone": "(503) 333-8192",
+        "primary": "Nag"
+    },
+    {
+        "name": "Praj",
+        "phone": "(503) 901-4088",
+        "primary": "Nag"
+    },
+    {
+        "name": "Pran",
+        "phone": "(971) 901-8671",
+        "primary": "Nag"
+    },
+    {
+        "name": "Nal",
+        "phone": "(503) 332-1774",
+        "primary": "Sat"
+    },
+    {
+        "name": "Nee",
+        "phone": "(971) 336-6819",
+        "primary": "Sat"
+    },
+    {
+        "name": "Hima",
+        "phone": "(971) 706-1998",
+        "primary": "Sat"
+    },
+    {
+        "name": "Ram",
+        "phone": "(503) 929-7354",
+        "primary": "Ram"
+    },
+    {
+        "name": "Pad",
+        "phone": "(971) 401-9976",
+        "primary": "Ram"
+    },
+    {
+        "name": "Sow",
+        "phone": "(971) 340-5485",
+        "primary": "JV"
+    }
+]
+```
