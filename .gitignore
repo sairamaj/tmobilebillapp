@@ -40,3 +40,4 @@ appsettings.Development.json
 .aws-sam
 
 users.json
+cached

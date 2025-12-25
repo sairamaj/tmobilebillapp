@@ -19,11 +19,13 @@ if __name__ == "__main__":
     bill_text = extract_text_from_pdf(pdf_path)
 
     initial_state = {
+        "pdf_file_name": os.path.basename(pdf_path),
         "raw_bill_text": bill_text,
         "parsed_bill": None,
         "human_feedback": None,
         "upload_status": None
     }
 
+    print(initial_state["pdf_file_name"])
     app = build_workflow()
     result = app.invoke(initial_state)
