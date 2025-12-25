@@ -20,9 +20,10 @@ add per line amount which is plan amount for non suspended line, month name in b
 round of all amounts to 2 decimals.
 
 add bill summary with following:
+- month in Jul2024 format
 - total amount
 - equipment total
 - services total
 - verification to see that total = (total plan amount generated + total equipment + total service)
 - verified_flag (true/false. the match of total and can deviate by $1)
-
+- per_line_plan_amount

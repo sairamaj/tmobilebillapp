@@ -85,13 +85,13 @@ def get_bill_info(state: AgentState) -> AgentState:
     parsed_bill = None
     tmp_path = r"C:\temp\test.json"
     users = get_user_data()
-    if os.path.exists(tmp_path):
-        try:
-            with open(tmp_path, "r", encoding="utf-8") as f:
-                parsed_bill = json.load(f)
-            print(f"Loaded parsed bill from {tmp_path}")
-        except Exception as e:
-            print(f"Failed to load {tmp_path}: {e}")
+    # if os.path.exists(tmp_path):
+    #     try:
+    #         with open(tmp_path, "r", encoding="utf-8") as f:
+    #             parsed_bill = json.load(f)
+    #         print(f"Loaded parsed bill from {tmp_path}")
+    #     except Exception as e:
+    #         print(f"Failed to load {tmp_path}: {e}")
 
     if parsed_bill is None:
         parsed_bill = extract_bill_with_gemini(raw_text, prompt, users)
@@ -122,7 +122,6 @@ def human_review(state: AgentState) -> AgentState:
         print(f"Failed to save parsed bill: {e}")
 
     feedback = input("Enter 'approve' to continue or anything else to deny: ").strip().lower()
-
     return {
         **state,
         "human_feedback": feedback
@@ -150,7 +149,7 @@ def upload_to_dynamodb(state: AgentState) -> AgentState:
     Replace with boto3 logic.
     """
     print("\nUploading bill to DynamoDB...")
-    db.upload(state["parsed_bill"])
+    upload(state["parsed_bill"])
     # TODO: boto3 DynamoDB put_item()
     upload_status = "SUCCESS"
 

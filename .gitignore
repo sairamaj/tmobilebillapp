@@ -38,3 +38,5 @@ msbuild.wrn
 .vs/
 appsettings.Development.json
 .aws-sam
+
+users.json
