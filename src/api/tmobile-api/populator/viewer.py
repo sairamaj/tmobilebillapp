@@ -8,6 +8,8 @@ from typing import Dict, Any
 from rich.console import Console
 from rich.table import Table
 from rich import box
+from rich.panel import Panel
+from rich.text import Text
 
 console = Console()
 
@@ -111,3 +113,26 @@ def print_bill_table(parsed_bill: Dict[str, Any]) -> None:
     add_summary_row(summary_table, "Grand Total", summary.get("total_amount"), highlight=True)
 
     console.print(summary_table)
+
+def print_validation_result(state: dict):
+    """
+    Pretty‑prints validation_flag and validation_message using Rich.
+    """
+
+    flag = state.get("validation_flag", False)
+    message = state.get("validation_message", "")
+    
+    if flag:
+        color = "green"
+        title = "VALIDATION PASSED"
+    else:
+        color = "red"
+        title = "VALIDATION FAILED"
+
+    console.print(
+        Panel(
+            Text(message, style=color),
+            title=title,
+            border_style=color
+        )
+    )

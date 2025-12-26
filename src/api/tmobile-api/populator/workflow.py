@@ -6,6 +6,7 @@ from nodes.human_review_node import human_review, review_condition
 from nodes.upload_node import upload_to_dynamodb
 from nodes.save_json_node import save_parsed_bill
 from nodes.load_cached_node import load_cached_bill
+from nodes.validate_bill_node import validate_bill_node
 
 
 class AgentState(TypedDict):
@@ -25,13 +26,13 @@ def route_after_cache(state: AgentState) -> str:
         return "cached"
     return "no_cache"
 
-
 def build_workflow():
     workflow = StateGraph(AgentState)
 
     # Nodes
     workflow.add_node("load_cached_bill", load_cached_bill)
     workflow.add_node("get_bill_info", get_bill_info)
+    workflow.add_node("validate_bill_node", validate_bill_node)   # <-- added
     workflow.add_node("save_parsed_bill", save_parsed_bill)
     workflow.add_node("human_review", human_review)
     workflow.add_node("upload_to_dynamodb", upload_to_dynamodb)
@@ -50,7 +51,8 @@ def build_workflow():
     )
 
     # Normal extraction path
-    workflow.add_edge("get_bill_info", "save_parsed_bill")
+    workflow.add_edge("get_bill_info", "validate_bill_node")      # <-- inserted
+    workflow.add_edge("validate_bill_node", "save_parsed_bill")   # <-- inserted
     workflow.add_edge("save_parsed_bill", "human_review")
 
     # Human review → upload or end
