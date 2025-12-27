@@ -34,15 +34,6 @@ ___
 	- `upload_node.py` — Uploads parsed bill to the DB.
 - `services/` — Helpers for LLM, PDF text extraction, storage, user data, etc.
 
-## Diagrams
-
-Place the following images in this directory (they are referenced by name):
-
-- `workflow.png` — High-level workflow diagram: get_bill_info -> save_parsed_bill -> human_review -> (approved -> upload_to_dynamodb | denied -> END)
-- `human-review.png` — Screenshot or mockup of the human-review CLI output (table view of parsed bill and approve/deny prompt).
-
-Add those images next to this README so they render on Git hosting platforms.
-
 ## How to run
 
 Prerequisites
