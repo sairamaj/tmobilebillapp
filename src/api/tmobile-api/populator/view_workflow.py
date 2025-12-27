@@ -21,21 +21,21 @@ def save_and_view_workflow():
     print(f"Saved Mermaid diagram → {mermaid_path}")
 
     # --- Convert Mermaid → PNG using Mermaid CLI ---
-    png_path = os.path.join(out_dir, "workflow_graph.png")
+    #png_path = os.path.join(out_dir, "workflow_graph.png")
 
-    try:
-        subprocess.run(
-            ["mmdc", "-i", mermaid_path, "-o", png_path],
-            check=True
-        )
-        print(f"Rendered PNG diagram → {png_path}")
-    except Exception as e:
-        print("Error running Mermaid CLI (mmdc). Is it installed globally?")
-        print(e)
-        return
+    # try:
+    #     subprocess.run(
+    #         ["mmdc", "-i", mermaid_path, "-o", png_path],
+    #         check=True
+    #     )
+    #     print(f"Rendered PNG diagram → {png_path}")
+    # except Exception as e:
+    #     print("Error running Mermaid CLI (mmdc). Is it installed globally?")
+    #     print(e)
+    #     return
 
     # --- Open PNG ---
-    webbrowser.open(f"file://{os.path.abspath(png_path)}")
+    #webbrowser.open(f"file://{os.path.abspath(png_path)}")
 
 
 if __name__ == "__main__":

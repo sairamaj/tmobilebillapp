@@ -1,6 +1,6 @@
 from langgraph.graph import StateGraph, END
 
-def validate_bill_node(state):
+def validate_bill(state):
     print("Validating bill information...")
     validated = validate_bill_info(state["parsed_bill"])
     print(f"Validation result: {validated.get('validation_flag')}, Message: {validated.get('validation_message')}")
