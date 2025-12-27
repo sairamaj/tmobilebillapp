@@ -1,4 +1,4 @@
-from typing import TypedDict, Optional, Dict, Any
+from typing import List, TypedDict, Optional, Dict, Any
 
 class AgentState(TypedDict):
     pdf_file_name: Optional[str]
@@ -7,3 +7,4 @@ class AgentState(TypedDict):
     human_feedback: Optional[str]
     upload_status: Optional[str]
     retry_count: int
+    chat_history: List[dict]

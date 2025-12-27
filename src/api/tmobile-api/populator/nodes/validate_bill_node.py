@@ -3,8 +3,17 @@ from langgraph.graph import StateGraph, END
 def validate_bill(state):
     print("Validating bill information...")
     validated = validate_bill_info(state["parsed_bill"])
-    print(f"Validation result: {validated.get('validation_flag')}, Message: {validated.get('validation_message')}")
-    return {**state, "validation": validated}
+
+    message = {
+        "role": "system",
+        "content": f"Validation result: {validated.get('validation_flag')}. "
+                   f"Message: {validated.get('validation_message')}"
+    }
+
+    chat_history = state.get("chat_history", [])
+    chat_history.append(message)
+
+    return {**state, "validation": validated, "chat_history": chat_history}
 
 def validate_bill_info(bill_info: dict) -> dict:
     """
