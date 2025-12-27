@@ -23,7 +23,8 @@ if __name__ == "__main__":
         "raw_bill_text": bill_text,
         "parsed_bill": None,
         "human_feedback": None,
-        "upload_status": None
+        "upload_status": None,
+        "retry_count": 0,
     }
 
     print(initial_state["pdf_file_name"])

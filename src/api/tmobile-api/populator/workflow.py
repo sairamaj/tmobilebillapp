@@ -1,21 +1,26 @@
 from langgraph.graph import StateGraph, END
 from typing import TypedDict, Optional, Dict, Any
 
+from nodes.increment_retry_node import increment_retry
 from nodes.bill_extraction_node import get_bill_info
 from nodes.human_review_node import human_review, review_condition
 from nodes.upload_node import upload_to_dynamodb
 from nodes.save_json_node import save_parsed_bill
 from nodes.load_cached_node import load_cached_bill
 from nodes.validate_bill_node import validate_bill_node
+from state import AgentState
 
+def validation_route(state: AgentState) -> str:
+    flag = state["parsed_bill"].get("validation_flag", False)
+    retries = state.get("retry_count", 0)
 
-class AgentState(TypedDict):
-    pdf_file_name: Optional[str]
-    raw_bill_text: Optional[str]
-    parsed_bill: Optional[Dict[str, Any]]
-    human_feedback: Optional[str]
-    upload_status: Optional[str]
+    if flag:
+        return "valid"
 
+    if retries < 3:
+        return "retry"
+
+    return "give_up"
 
 def route_after_cache(state: AgentState) -> str:
     """
@@ -31,8 +36,9 @@ def build_workflow():
 
     # Nodes
     workflow.add_node("load_cached_bill", load_cached_bill)
+    workflow.add_node("increment_retry", increment_retry)   
     workflow.add_node("get_bill_info", get_bill_info)
-    workflow.add_node("validate_bill_node", validate_bill_node)   # <-- added
+    workflow.add_node("validate_bill_node", validate_bill_node)   
     workflow.add_node("save_parsed_bill", save_parsed_bill)
     workflow.add_node("human_review", human_review)
     workflow.add_node("upload_to_dynamodb", upload_to_dynamodb)
@@ -51,8 +57,17 @@ def build_workflow():
     )
 
     # Normal extraction path
-    workflow.add_edge("get_bill_info", "validate_bill_node")      # <-- inserted
-    workflow.add_edge("validate_bill_node", "save_parsed_bill")   # <-- inserted
+    workflow.add_edge("get_bill_info", "validate_bill_node")      
+    workflow.add_conditional_edges(
+    "validate_bill_node",
+    validation_route,
+    {
+        "valid": "save_parsed_bill",
+        "retry": "increment_retry",
+        "give_up": "human_review",
+    })
+
+    workflow.add_edge("increment_retry", "get_bill_info")
     workflow.add_edge("save_parsed_bill", "human_review")
 
     # Human review → upload or end
